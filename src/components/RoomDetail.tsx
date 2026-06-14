@@ -7,7 +7,6 @@ import { SESSIONS } from "@/data/sessions";
 import { WORLD_ENTITIES } from "@/data/world";
 import { Badge } from "@/components/Badge";
 import { GameCard } from "@/components/GameCard";
-import { PageHeader } from "@/components/PageHeader";
 import { SessionCard } from "@/components/SessionCard";
 import { WorldEntityCard } from "@/components/WorldEntityCard";
 
@@ -20,36 +19,62 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
   const entities = WORLD_ENTITIES.filter((entity) => entity.roomId === roomId);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-12">
-      <PageHeader
-        eyebrow="Room"
-        title={`${room.icon} ${room.name}`}
-        lead={room.description}
-        action={
-          <Link
-            href="/rooms"
-            className="text-sm font-medium text-muted hover:text-foreground"
+    <main className="mx-auto w-full max-w-6xl px-6 py-10">
+      <Link
+        href="/rooms"
+        className="inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-foreground"
+      >
+        <span aria-hidden>←</span> All rooms
+      </Link>
+
+      {/* Room hero banner */}
+      <section className="relative mt-4 overflow-hidden rounded-3xl border border-border bg-surface/60 p-8 gw-glow sm:p-10">
+        <div aria-hidden className="gw-grid absolute inset-0 opacity-15" />
+        <div
+          aria-hidden
+          className={`absolute inset-0 bg-gradient-to-br ${accent.gradient}`}
+        />
+        <div
+          aria-hidden
+          className={`absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl ${accent.halo}`}
+        />
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+          <span
+            className={`grid h-24 w-24 shrink-0 place-items-center rounded-3xl bg-background/40 text-5xl ring-1 backdrop-blur-sm gw-float ${accent.ring}`}
           >
-            ← All rooms
-          </Link>
-        }
-      />
-
-      <p className={`mt-6 text-lg font-medium ${accent.text}`}>{room.tagline}</p>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-wide text-faint">
-          Hosted by
-        </span>
-        {room.hosts.map((host) => (
-          <Badge key={host} tone={room.accent}>
-            {host}
-          </Badge>
-        ))}
-      </div>
+            {room.icon}
+          </span>
+          <div>
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${accent.chip}`}
+            >
+              Room
+            </span>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {room.name}
+            </h1>
+            <p className={`mt-2 text-lg font-medium ${accent.text}`}>
+              {room.tagline}
+            </p>
+          </div>
+        </div>
+        <p className="relative mt-6 max-w-2xl text-base leading-7 text-muted">
+          {room.description}
+        </p>
+        <div className="relative mt-5 flex flex-wrap items-center gap-2">
+          <span className="text-xs uppercase tracking-wide text-faint">
+            Hosted by
+          </span>
+          {room.hosts.map((host) => (
+            <Badge key={host} tone={room.accent}>
+              {host}
+            </Badge>
+          ))}
+        </div>
+      </section>
 
       {/* Sample activities */}
-      <section className="mt-10">
+      <section className="mt-12">
         <h2 className="text-lg font-semibold text-foreground">
           What you&apos;ll do here
         </h2>
@@ -57,11 +82,11 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
           {room.sampleActivities.map((activity) => (
             <li
               key={activity}
-              className="rounded-xl border border-border bg-surface p-4 text-sm text-muted"
+              className="group rounded-xl border border-border bg-surface p-4 text-sm text-muted transition-colors hover:border-border-strong"
             >
               <span
                 aria-hidden
-                className={`mb-2 block h-1.5 w-6 rounded-full ${accent.bar}`}
+                className={`mb-2 block h-1.5 w-6 rounded-full transition-all duration-300 group-hover:w-10 ${accent.bar}`}
               />
               {activity}
             </li>
@@ -69,14 +94,17 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
         </ul>
       </section>
 
-      {/* Games */}
+      {/* Games — the quest board */}
       <section className="mt-12">
-        <h2 className="text-lg font-semibold text-foreground">
-          Games in this room
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold text-foreground">Quest board</h2>
+          <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-faint ring-1 ring-border">
+            {games.length} games
+          </span>
+        </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {games.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <GameCard key={game.id} game={game} accent={room.accent} />
           ))}
         </div>
       </section>
@@ -110,7 +138,10 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
       ) : null}
 
       {/* Governance reminder */}
-      <section className="mt-12 rounded-2xl border border-border bg-surface/40 p-6">
+      <section className="mt-12 flex items-start gap-3 rounded-2xl border border-border bg-surface/40 p-6">
+        <span aria-hidden className="text-lg">
+          🛡️
+        </span>
         <p className="text-sm leading-6 text-muted">
           Everything in this room is play. Narration is fiction, state is a toy,
           and nothing is saved unless you ask. See the{" "}

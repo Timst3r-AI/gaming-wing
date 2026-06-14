@@ -30,7 +30,7 @@ export const ROOMS: Room[] = [
     description:
       "Turn-based collaborative fiction run by a Game Master, with AI 1 and AI 2 playing alongside the User. Quests have beats and choices — and every word stays fiction.",
     icon: "📖",
-    accent: "violet",
+    accent: "nebula",
     hosts: ["Game Master", "NPC", "AI 1", "AI 2"],
     sampleActivities: [
       "Begin a quest from a prompt seed",
@@ -62,7 +62,7 @@ export const ROOMS: Room[] = [
     description:
       "Light systems play — a town, a garden, a tiny economy — stewarded by a Room Agent. The User nudges; the simulation responds. State is a toy, not a ledger of truth.",
     icon: "🌱",
-    accent: "teal",
+    accent: "sky",
     hosts: ["Room Agent", "World Agent"],
     sampleActivities: [
       "Set a policy and watch the season turn",

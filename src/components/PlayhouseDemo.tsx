@@ -99,51 +99,76 @@ export function PlayhouseDemo() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-      {/* Play column */}
-      <div className="flex flex-col rounded-2xl border border-border bg-surface/60 p-6 gw-glow">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">
+      {/* Console */}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface/60 p-2 gw-glow">
+        {/* Bezel header */}
+        <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+          <div className="flex items-center gap-2">
+            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-rose/80" />
+            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-accent/80" />
+            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-teal/80" />
+            <span className="ml-2 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-faint">
+              <span
+                aria-hidden
+                className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle"
+              />
               Playhouse Demo
-            </h3>
-            <p className="text-sm text-muted">
-              Take a few turns, then save your play to a local slot.
-            </p>
+            </span>
           </div>
+          <span className="rounded-full bg-surface-2 px-2.5 py-0.5 font-mono text-[11px] text-muted ring-1 ring-border">
+            Turn {turns.length}
+          </span>
+        </div>
+
+        {/* Screen */}
+        <div className="relative rounded-xl border border-border bg-background/50 p-4 sm:p-5">
+          <div
+            aria-hidden
+            className="gw-scanlines pointer-events-none absolute inset-0 rounded-xl opacity-70"
+          />
+          <div className="relative max-h-[22rem] overflow-y-auto pr-1">
+            <EventFeed events={turnsToEvents(turns)} />
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-3">
+          <p className="text-xs text-faint">
+            Take a few turns, then save your play to a slot.
+          </p>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={takeTurn}
-              className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-background transition-colors hover:bg-accent-soft"
+              className="group inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30 active:scale-95"
             >
+              <span aria-hidden className="text-xs">
+                ▶
+              </span>
               Take a turn
             </button>
             <button
               type="button"
               onClick={resetPlay}
               disabled={turns.length === 0}
-              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground disabled:opacity-40"
+              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground disabled:opacity-40"
             >
-              Clear play
+              Clear
             </button>
           </div>
         </div>
-
-        <div className="mt-5">
-          <EventFeed events={turnsToEvents(turns)} />
-        </div>
       </div>
 
-      {/* Save slots column */}
+      {/* Save slots — memory cartridges */}
       <div className="flex flex-col rounded-2xl border border-border bg-surface/60 p-6">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-base font-semibold text-foreground">
-            Demo save slots
+          <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
+            <span aria-hidden>💾</span> Save slots
           </h3>
           <button
             type="button"
             onClick={handleResetAll}
-            className="text-xs font-medium text-faint underline-offset-2 hover:text-rose hover:underline"
+            className="text-xs font-medium text-faint underline-offset-2 transition-colors hover:text-rose hover:underline"
           >
             Reset all
           </button>
@@ -159,10 +184,24 @@ export function PlayhouseDemo() {
             return (
               <li
                 key={index}
-                className="rounded-xl border border-border bg-surface p-4"
+                className={`rounded-xl border p-4 transition-colors ${
+                  filled
+                    ? "border-teal/40 bg-teal/5"
+                    : "border-border bg-surface"
+                }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <span
+                      aria-hidden
+                      className={`grid h-6 w-6 place-items-center rounded-md text-xs ring-1 ${
+                        filled
+                          ? "bg-teal/15 text-teal ring-teal/40"
+                          : "bg-surface-2 text-faint ring-border"
+                      }`}
+                    >
+                      {filled ? "▣" : "▢"}
+                    </span>
                     Slot {index + 1}
                   </span>
                   <span className="text-xs text-faint">
@@ -178,7 +217,7 @@ export function PlayhouseDemo() {
                     type="button"
                     onClick={() => handleSave(index)}
                     disabled={turns.length === 0}
-                    className="rounded-md bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground ring-1 ring-border transition-colors hover:bg-surface-2/70 disabled:opacity-40"
+                    className="rounded-md bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground ring-1 ring-border transition-colors hover:bg-surface-3 disabled:opacity-40"
                   >
                     Save here
                   </button>
@@ -204,9 +243,12 @@ export function PlayhouseDemo() {
           })}
         </ul>
 
-        <p className="mt-4 rounded-lg bg-surface-2/60 p-3 text-xs leading-5 text-faint ring-1 ring-border">
-          Reminder: play is not memory. These slots are a demo of explicit,
-          user-driven saving — nothing here syncs anywhere.
+        <p className="mt-4 flex items-start gap-2 rounded-lg bg-surface-2/60 p-3 text-xs leading-5 text-faint ring-1 ring-border">
+          <span aria-hidden>🛡️</span>
+          <span>
+            Reminder: play is not memory. These slots are a demo of explicit,
+            user-driven saving — nothing here syncs anywhere.
+          </span>
         </p>
       </div>
     </div>

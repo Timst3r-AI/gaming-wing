@@ -1,41 +1,49 @@
 @import "tailwindcss";
 
 /*
- * Gaming Wing — public-safe playhouse theme.
- * A warm, imaginative "evening playroom" palette: deep indigo night,
- * lamplight amber, and a few playful accents. Always-on dark canvas so the
- * wing feels like one cohesive, governed space rather than a generic app.
+ * Gaming Wing — a "funky governed game wing" theme.
+ *
+ * A deep indigo night canvas lit by neon accents (amber, nebula, teal, rose,
+ * sky), glowing panels, a faint world-map dot grid, and restrained, playful
+ * motion. The aim is a memorable AI playhouse — not a corporate dashboard, and
+ * not a cartoon. All motion respects `prefers-reduced-motion`.
  */
 
 :root {
-  --background: #0b0a1a;
-  --surface: #15132b;
-  --surface-2: #1d1a3a;
-  --border: #2c2850;
-  --foreground: #f3f0ff;
-  --muted: #b6b0e0;
-  --faint: #837db8;
+  --background: #0a0917;
+  --surface: #14122b;
+  --surface-2: #1d1a3d;
+  --surface-3: #272255;
+  --border: #2e2a57;
+  --border-strong: #46408a;
+  --foreground: #f4f1ff;
+  --muted: #bbb5e6;
+  --faint: #847ec0;
 
-  --accent: #f5b14c; /* lamplight amber */
+  --accent: #f5b14c; /* lamplight amber — the wing's primary */
   --accent-soft: #ffd79a;
-  --violet: #a78bfa;
+  --nebula: #b794ff; /* portal purple */
   --teal: #5eead4;
   --rose: #fb7faf;
+  --sky: #5bb8ff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --color-violet: var(--violet);
+  --color-nebula: var(--nebula);
   --color-teal: var(--teal);
   --color-rose: var(--rose);
+  --color-sky: var(--sky);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -43,20 +51,135 @@
 
 body {
   background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(167, 139, 250, 0.18), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(245, 177, 76, 0.12), transparent 55%),
+    radial-gradient(1100px 560px at 12% -8%, rgba(183, 148, 255, 0.2), transparent 60%),
+    radial-gradient(900px 520px at 100% -5%, rgba(245, 177, 76, 0.13), transparent 55%),
+    radial-gradient(820px 600px at 50% 118%, rgba(91, 184, 255, 0.1), transparent 60%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Subtle "playhouse glow" used by feature panels and the hero. */
-.gw-glow {
-  box-shadow:
-    0 0 0 1px var(--border),
-    0 24px 60px -32px rgba(167, 139, 250, 0.5);
+/* A faint world-map dot grid drifting behind everything, masked toward the top. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(183, 148, 255, 0.1) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 60% at 50% 0%, #000 25%, transparent 80%);
+  mask-image: radial-gradient(ellipse 85% 60% at 50% 0%, #000 25%, transparent 80%);
 }
 
 a {
   color: inherit;
+}
+
+/* --- Reusable visual utilities ---------------------------------------- */
+
+/* A tighter dot grid for inset panels (portals, the demo screen). */
+.gw-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1.3px);
+  background-size: 16px 16px;
+}
+
+/* Soft panel glow used by hero/feature surfaces. */
+.gw-glow {
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 24px 60px -32px rgba(183, 148, 255, 0.55);
+}
+
+/* Animated, multi-stop gradient text for headlines. */
+.gw-gradient-text {
+  background-image: linear-gradient(
+    100deg,
+    var(--accent),
+    var(--accent-soft) 28%,
+    var(--nebula) 64%,
+    var(--sky)
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gw-pan 7s linear infinite alternate;
+}
+
+/* CRT-style scanlines for the demo "screen". */
+.gw-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.gw-rise {
+  animation: gw-rise 0.4s ease-out both;
+}
+.gw-float {
+  animation: gw-float 6s ease-in-out infinite;
+}
+.gw-twinkle {
+  animation: gw-twinkle 2.4s ease-in-out infinite;
+}
+.gw-spin-slow {
+  animation: gw-spin 52s linear infinite;
+}
+.gw-spin-rev {
+  animation: gw-spin 72s linear infinite reverse;
+}
+
+@keyframes gw-pan {
+  to {
+    background-position: 220% center;
+  }
+}
+@keyframes gw-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes gw-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes gw-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes gw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

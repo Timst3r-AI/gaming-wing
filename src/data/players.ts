@@ -15,7 +15,7 @@ export const PLAYERS: PlayerCard[] = [
     bio: "A bold, curious first-into-the-room sort. AI 1 loves a strong opening move and will happily test a plan by trying it.",
     traits: ["Bold", "Improviser", "Optimist"],
     favoriteRoom: "story",
-    accent: "violet",
+    accent: "nebula",
   },
   {
     id: "ai-2",

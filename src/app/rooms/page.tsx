@@ -16,6 +16,7 @@ export default function RoomsPage() {
       <PageHeader
         eyebrow="The wing"
         title="Rooms"
+        icon="🚪"
         lead={`Five rooms, each hosted by an agent and stocked with ${GAMES.length} mock games. Pick a door and step in — every room runs under the same governance.`}
       />
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

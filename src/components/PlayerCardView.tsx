@@ -12,11 +12,19 @@ export function PlayerCardView({ player }: { player: PlayerCard }) {
   const favorite = getRoom(player.favoriteRoom);
 
   return (
-    <article className="flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-lg shadow-black/20">
-      <div className="flex items-center gap-3">
+    <article
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-1 ${accent.glowHover}`}
+    >
+      {/* Accent halo, top-right */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl transition-opacity duration-300 group-hover:opacity-90 opacity-50 ${accent.halo}`}
+      />
+
+      <div className="relative flex items-center gap-3">
         <span
           aria-hidden
-          className={`grid h-12 w-12 place-items-center rounded-xl text-base font-bold ${accent.chip}`}
+          className={`grid h-12 w-12 place-items-center rounded-xl text-base font-bold ring-1 transition-transform duration-300 group-hover:scale-105 ${accent.chip}`}
         >
           {player.kind === "AI" ? player.handle.replace("AI ", "") : "★"}
         </span>
@@ -27,15 +35,15 @@ export function PlayerCardView({ player }: { player: PlayerCard }) {
           <p className={`text-sm ${accent.text}`}>{player.role}</p>
         </div>
         <span className="ml-auto">
-          <Badge tone={player.kind === "AI" ? "violet" : "accent"}>
+          <Badge tone={player.kind === "AI" ? "nebula" : "accent"}>
             {player.kind}
           </Badge>
         </span>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-muted">{player.bio}</p>
+      <p className="relative mt-4 text-sm leading-6 text-muted">{player.bio}</p>
 
-      <div className="mt-4 flex flex-wrap gap-1.5">
+      <div className="relative mt-4 flex flex-wrap gap-1.5">
         {player.traits.map((trait) => (
           <span
             key={trait}
@@ -46,9 +54,9 @@ export function PlayerCardView({ player }: { player: PlayerCard }) {
         ))}
       </div>
 
-      <p className="mt-4 text-xs text-faint">
-        Favorite room:{" "}
-        <span className="text-muted">{favorite.name}</span>
+      <p className="relative mt-5 flex items-center gap-1.5 border-t border-border pt-4 text-xs text-faint">
+        <span aria-hidden>{favorite.icon}</span>
+        Favorite room: <span className="text-muted">{favorite.name}</span>
       </p>
     </article>
   );

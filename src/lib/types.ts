@@ -40,7 +40,7 @@ export interface Room {
   /** Emoji used as a lightweight, dependency-free room mark. */
   icon: string;
   /** CSS variable token name (without the `--color-` prefix) for the accent. */
-  accent: "violet" | "accent" | "teal" | "rose";
+  accent: "nebula" | "accent" | "teal" | "rose" | "sky";
   /** Agents that host or steward play in this room. */
   hosts: AgentRole[];
   sampleActivities: string[];
@@ -70,7 +70,7 @@ export interface PlayerCard {
   traits: string[];
   favoriteRoom: RoomId;
   /** Accent token name for the avatar chip. */
-  accent: "violet" | "accent" | "teal" | "rose";
+  accent: "nebula" | "accent" | "teal" | "rose" | "sky";
 }
 
 export type GameEventKind =
