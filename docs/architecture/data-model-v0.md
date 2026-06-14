@@ -32,7 +32,7 @@ A wing of the playhouse. Source of truth for the `/rooms/[slug]` routes.
 | `slug` | `string` | URL segment under `/rooms`. |
 | `name`, `tagline`, `description` | `string` | Display copy. |
 | `icon` | `string` | Emoji mark (dependency-free). |
-| `accent` | accent token | `violet` · `accent` · `teal` · `rose`. |
+| `accent` | accent token | `nebula` · `accent` · `teal` · `rose` · `sky`. |
 | `hosts` | `AgentRole[]` | Agents that host/steward the room. |
 | `sampleActivities` | `string[]` | Example things to do. |
 
