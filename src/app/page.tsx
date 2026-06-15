@@ -98,14 +98,14 @@ export default function Home() {
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
             <div className="lg:w-72 lg:shrink-0">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                The laws of the wing
+                The rules of the arena
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">
                 An arena with rules you can read.
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
                 Every room in the arena follows the same governance. These laws
-                keep play warm and safe — and keep this wing public.
+                keep play warm and safe — and keep this arena public.
               </p>
               <Link
                 href="/docs"
@@ -128,7 +128,7 @@ export default function Home() {
                 Pick a door
               </p>
               <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">
-                Five rooms, one wing
+                Five rooms, one arena
               </h2>
               <p className="mt-2 text-muted">
                 Each door opens on a distinct game space, hosted by an agent.
@@ -157,8 +157,8 @@ export default function Home() {
             Meet the players
           </h2>
           <p className="mt-2 max-w-2xl text-muted">
-            AI 1 and AI 2 are the wing&apos;s resident AI Gamers. The User is
-            you — and the wing arranges itself around your choices.
+            AI 1 and AI 2 are the arena&apos;s resident AI Gamers. The User is
+            you — and the arena arranges itself around your choices.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {PLAYERS.map((player) => (

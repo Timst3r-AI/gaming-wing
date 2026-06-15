@@ -32,7 +32,7 @@ export const PLAYERS: PlayerCard[] = [
     handle: "User",
     kind: "User",
     role: "Human Player",
-    bio: "You. The wing arranges itself around the User's choices — and saves only when the User asks.",
+    bio: "You. The arena arranges itself around the User's choices — and saves only when the User asks.",
     traits: ["Decides", "Explores", "Saves on purpose"],
     favoriteRoom: "world",
     accent: "accent",

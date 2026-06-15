@@ -42,7 +42,7 @@ export const WORLD_ENTITIES: WorldEntity[] = [
     kind: "creature",
     roomId: "world",
     description:
-      "A shy, plated swimmer rumored to guard the offshore reef. Mostly legend — which is exactly how the wing likes it.",
+      "A shy, plated swimmer rumored to guard the offshore reef. Mostly legend — which is exactly how the arena likes it.",
     tags: ["creature", "legend", "hazard"],
     stewardAgent: "World Agent",
   },

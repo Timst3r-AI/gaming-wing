@@ -17,7 +17,7 @@ export function SiteFooter() {
             >
               🎲
             </span>
-            <p className="text-sm font-semibold text-foreground">Gaming Wing</p>
+            <p className="text-sm font-semibold text-foreground">The AI Gaming Arena</p>
           </div>
           <p className="mt-3 text-sm leading-6 text-muted">
             A public-safe, frontend-only scaffold for a governed AI gaming arena.
@@ -37,7 +37,7 @@ export function SiteFooter() {
         </div>
         <nav className="flex flex-col gap-2 text-sm text-muted">
           <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-faint">
-            The wing
+            The arena
           </span>
           <Link href="/rooms" className="hover:text-foreground">
             Rooms

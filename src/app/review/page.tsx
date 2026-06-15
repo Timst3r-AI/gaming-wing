@@ -52,7 +52,7 @@ export default function ReviewPage() {
         eyebrow="Governance"
         title="Review room"
         icon="🛡️"
-        lead="Nothing leaves the wing on its own. Before any play could be adopted by a host AI House, a human reviews it here — export-only and review-only. This queue is a mock of that gate."
+        lead="Nothing leaves the arena on its own. Before any play could be adopted by a host AI House, a human reviews it here — export-only and review-only. This queue is a mock of that gate."
       />
 
       {/* Summary */}

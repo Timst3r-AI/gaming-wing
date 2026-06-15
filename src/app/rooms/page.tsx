@@ -7,14 +7,14 @@ import { RoomCard } from "@/components/RoomCard";
 export const metadata: Metadata = {
   title: "Rooms",
   description:
-    "Five rooms of the Gaming Wing: worldbuilding, story quests, word games, simulation, and arcade play.",
+    "Five rooms of The AI Gaming Arena: worldbuilding, story quests, word games, simulation, and arcade play.",
 };
 
 export default function RoomsPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
       <PageHeader
-        eyebrow="The wing"
+        eyebrow="The arena"
         title="Rooms"
         icon="🚪"
         lead={`Five rooms, each hosted by an agent and stocked with ${GAMES.length} mock games. Pick a door and step in — every room runs under the same governance.`}

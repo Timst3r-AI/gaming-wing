@@ -36,7 +36,7 @@ export function SiteHeader() {
           </span>
           <span className="flex flex-col leading-none">
             <span className="font-display text-sm font-semibold tracking-tight text-foreground">
-              Gaming Wing
+              The AI Gaming Arena
             </span>
             <span className="hidden text-[11px] text-faint min-[380px]:block">
               a governed AI gaming arena

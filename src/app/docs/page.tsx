@@ -5,7 +5,7 @@ import { GovernanceLaws } from "@/components/GovernanceLaws";
 export const metadata: Metadata = {
   title: "Docs & governance",
   description:
-    "The governance laws of the Gaming Wing and the documents that define its boundaries, game loop, data model, and adoption path.",
+    "The governance laws of The AI Gaming Arena and the documents that define its boundaries, game loop, data model, and adoption path.",
 };
 
 const DOCUMENTS: {
@@ -15,17 +15,17 @@ const DOCUMENTS: {
   icon: string;
 }[] = [
   {
-    title: "Gaming Wing Constitution",
+    title: "The AI Gaming Arena Constitution",
     path: "docs/constitution/gaming-wing-constitution.md",
     summary:
-      "The full statement of the wing's purpose and its governance laws, in plain language.",
+      "The full statement of the arena's purpose and its governance laws, in plain language.",
     icon: "📜",
   },
   {
     title: "Boundary Map",
     path: "docs/architecture/boundary-map.md",
     summary:
-      "What lives inside this public wing and what is deliberately kept out — the public-safe line.",
+      "What lives inside this public arena and what is deliberately kept out — the public-safe line.",
     icon: "🗺️",
   },
   {
@@ -46,14 +46,14 @@ const DOCUMENTS: {
     title: "Adoption Adapter",
     path: "docs/architecture/adoption-adapter.md",
     summary:
-      "The export-only, review-only seam by which a host AI House could ever adopt content from this wing.",
+      "The export-only, review-only seam by which a host AI House could ever adopt content from this arena.",
     icon: "🚪",
   },
   {
-    title: "ADR-0001 · Public-Safe Standalone Wing",
+    title: "ADR-0001 · Public-Safe Standalone Arena",
     path: "docs/decisions/ADR-0001-public-safe-standalone-wing.md",
     summary:
-      "The decision to build this as a standalone, frontend-only, public-safe wing in this pass.",
+      "The decision to build this as a standalone, frontend-only, public-safe arena in this pass.",
     icon: "📝",
   },
 ];
@@ -65,7 +65,7 @@ export default function DocsPage() {
         eyebrow="Reference"
         title="Docs & governance"
         icon="📚"
-        lead="The laws below govern every room. The documents that follow define the wing's boundaries, its game loop, its data model, and the narrow path by which content could ever be adopted elsewhere."
+        lead="The laws below govern every room. The documents that follow define the arena's boundaries, its game loop, its data model, and the narrow path by which content could ever be adopted elsewhere."
       />
 
       <section className="mt-10">

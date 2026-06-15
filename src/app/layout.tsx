@@ -24,8 +24,8 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "Gaming Wing — a governed AI gaming arena",
-    template: "%s · Gaming Wing",
+    default: "The AI Gaming Arena — a governed AI gaming arena",
+    template: "%s · The AI Gaming Arena",
   },
   description:
     "A public-safe, frontend-only scaffold for a governed AI gaming arena: room-based games hosted by AI agents, where play is never memory, truth, or identity.",
