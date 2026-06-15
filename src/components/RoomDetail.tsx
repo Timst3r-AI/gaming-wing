@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ACCENTS } from "@/lib/accents";
 import { getGamesForRoom } from "@/lib/games";
 import { getRoom, ROOMS } from "@/lib/rooms";
+import { getPlayableForRoom } from "@/lib/playableGames";
 import type { RoomId } from "@/lib/types";
 import { SESSIONS } from "@/data/sessions";
 import { WORLD_ENTITIES } from "@/data/world";
@@ -20,6 +21,7 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
   const index = ROOMS.findIndex((r) => r.id === roomId);
   const doorNo = String(index + 1).padStart(2, "0");
   const otherRooms = ROOMS.filter((r) => r.id !== roomId);
+  const playable = getPlayableForRoom(roomId);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
@@ -74,6 +76,18 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
             </Badge>
           ))}
         </div>
+
+        {playable ? (
+          <div className="relative mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link
+              href={playable.route}
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30"
+            >
+              <span aria-hidden>▶</span> Play {playable.name}
+            </Link>
+            <span className="text-sm text-muted">{playable.tagline}</span>
+          </div>
+        ) : null}
       </section>
 
       {/* Sample activities */}
