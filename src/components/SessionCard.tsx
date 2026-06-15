@@ -10,7 +10,7 @@ const STATUS: Record<
 > = {
   live: { label: "Live", tone: "live", dot: true },
   paused: { label: "Paused", tone: "accent", dot: false },
-  "demo-archived": { label: "Demo archive", tone: "neutral", dot: false },
+  "demo-archived": { label: "Demo snapshot", tone: "neutral", dot: false },
 };
 
 export function SessionCard({ session }: { session: GameSession }) {

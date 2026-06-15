@@ -45,7 +45,7 @@ export const GAMES: Game[] = [
     kind: "story-quest",
     roomId: "story",
     summary:
-      "A choice-heavy dungeon crawl where narrated rolls decide outcomes and NPCs remember your last move (within the session).",
+      "A choice-heavy dungeon crawl where narrated rolls decide outcomes and NPCs react to your last move within the session.",
     players: "1 + Game Master + NPCs",
     difficulty: "challenge",
     hostedBy: "Game Master",

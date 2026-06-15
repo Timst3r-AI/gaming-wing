@@ -48,7 +48,7 @@ export const SESSIONS: GameSession[] = [
     participants: ["User", "Room Agent"],
     turn: 22,
     summary:
-      "A two-season run balancing grain and goodwill. Archived as a demo snapshot — nothing here persists on its own.",
+      "A two-season run balancing grain and goodwill. Saved as a demo snapshot — nothing here persists on its own.",
   },
   {
     id: "sess-riddle-relay",
