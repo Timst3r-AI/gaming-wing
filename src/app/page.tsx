@@ -27,25 +27,24 @@ export default function Home() {
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium text-muted backdrop-blur-sm">
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle" />
-                Public-safe scaffold · frontend only
+                Public-safe AI gaming arena
               </span>
               <h1 className="mt-5 font-display text-[2.75rem] font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl">
-                Step into a governed{" "}
-                <span className="gw-gradient-text">AI gaming arena</span>.
+                Enter the{" "}
+                <span className="gw-gradient-text">AI Gaming Arena</span>.
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
-                Beyond this threshold is a room-based wing where the User plays
-                alongside AI 1 and AI 2 — guided by a Game Master, a World
-                Agent, and Room Agents. Worldbuilding, story quests, word games,
-                simulation, and arcade play, all under one clear rule: play is
-                play, never memory.
+                Choose a room, take a turn, and play alongside AI Gamer 1 and AI
+                Gamer 2 — guided by a Game Master, a World Agent, and Room
+                Agents. Every game stays inside one clear boundary: play is play,
+                never memory.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/rooms"
                   className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30"
                 >
-                  Enter the wing
+                  Enter the arena
                   <span aria-hidden className="transition-transform group-hover:translate-x-1">
                     →
                   </span>
@@ -54,7 +53,7 @@ export default function Home() {
                   href="/docs"
                   className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-border-strong hover:bg-surface/60"
                 >
-                  Read the governance
+                  Read the rules
                 </Link>
               </div>
 
@@ -102,11 +101,11 @@ export default function Home() {
                 The laws of the wing
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">
-                A house with rules you can read.
+                An arena with rules you can read.
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Every room inherits the same governance. These laws keep play
-                warm and safe — and keep this wing public.
+                Every room in the arena follows the same governance. These laws
+                keep play warm and safe — and keep this wing public.
               </p>
               <Link
                 href="/docs"
