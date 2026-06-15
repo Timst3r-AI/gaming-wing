@@ -7,7 +7,6 @@ import { RoomCard } from "@/components/RoomCard";
 import { PlayerCardView } from "@/components/PlayerCardView";
 import { GovernanceLaws } from "@/components/GovernanceLaws";
 import { PlayhouseDemo } from "@/components/PlayhouseDemo";
-import { HeroPortal } from "@/components/HeroPortal";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { RoomMarquee } from "@/components/RoomMarquee";
 
@@ -24,7 +23,7 @@ export default function Home() {
       <section className="relative isolate overflow-hidden">
         <HeroBackdrop />
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <div className="grid items-center gap-10 pt-12 pb-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:pb-16">
+          <div className="grid min-h-[32rem] items-center gap-10 pt-12 pb-12 sm:min-h-[34rem] sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:pb-16">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium text-muted backdrop-blur-sm">
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle" />
@@ -78,7 +77,8 @@ export default function Home() {
               </dl>
             </div>
 
-            <HeroPortal />
+            {/* Right column left open so the cinematic scene reads as the world. */}
+            <div aria-hidden className="hidden lg:block" />
           </div>
         </div>
       </section>

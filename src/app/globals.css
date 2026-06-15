@@ -218,6 +218,16 @@ a {
   }
 }
 
+/* Drifting motes marching along the hero road into the wing. */
+.gw-dash {
+  animation: gw-dash 24s linear infinite;
+}
+@keyframes gw-dash {
+  to {
+    stroke-dashoffset: -480;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
