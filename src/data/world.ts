@@ -52,7 +52,7 @@ export const WORLD_ENTITIES: WorldEntity[] = [
     kind: "npc",
     roomId: "story",
     description:
-      "A patient, rule-bound NPC who guards the Branching Keep's vault. Remembers the party's choices within a session only.",
+      "A patient, rule-bound NPC who guards the Branching Keep's vault. Responds to the party's choices within this session only.",
     tags: ["npc", "keep", "negotiation"],
     stewardAgent: "Game Master",
   },

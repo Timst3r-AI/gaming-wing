@@ -42,10 +42,10 @@ export const REVIEW_ITEMS: ReviewItem[] = [
     kind: "character-sheet",
     status: "needs-changes",
     submittedBy: "Game Master",
-    note: "Trim session-specific notes that read like real memory. Character continuity is a costume, not an identity.",
+    note: "Trim session-specific notes that read like a real personal record. Character continuity is a costume, not an identity.",
     governanceFlags: [
       "Continuity is not identity",
-      "Strip session-only recall before export",
+      "Strip session-only continuity before export",
     ],
   },
   {
