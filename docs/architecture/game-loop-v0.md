@@ -7,7 +7,7 @@ network — just mock data and local state.
 ## v0: what actually happens today
 
 The interactive surface is the **gaming console** demo on the landing page
-([`src/components/PlayhouseDemo.tsx`](../../src/components/PlayhouseDemo.tsx)).
+([`src/components/GameConsoleDemo.tsx`](../../src/components/GameConsoleDemo.tsx)).
 
 ```
 User clicks "Take a turn"

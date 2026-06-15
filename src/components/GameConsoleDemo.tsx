@@ -52,7 +52,7 @@ function formatSavedAt(iso: string): string {
  *
  * Everything resets on demand. None of it is memory, truth, or identity.
  */
-export function PlayhouseDemo() {
+export function GameConsoleDemo() {
   const [turns, setTurns] = useState<DemoTurn[]>([]);
   // Read the localStorage save cartridges as an external store: stable on the
   // server, hydration-safe, and re-rendered whenever a save/eject mutates them.

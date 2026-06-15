@@ -6,7 +6,7 @@ import { PLAYERS } from "@/data/players";
 import { RoomCard } from "@/components/RoomCard";
 import { PlayerCardView } from "@/components/PlayerCardView";
 import { GovernanceLaws } from "@/components/GovernanceLaws";
-import { PlayhouseDemo } from "@/components/PlayhouseDemo";
+import { GameConsoleDemo } from "@/components/GameConsoleDemo";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { RoomMarquee } from "@/components/RoomMarquee";
 
@@ -181,7 +181,7 @@ export default function Home() {
             save them to a cartridge — nothing leaves your browser.
           </p>
           <div className="mt-8">
-            <PlayhouseDemo />
+            <GameConsoleDemo />
           </div>
         </section>
 
