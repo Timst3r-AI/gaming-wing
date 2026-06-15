@@ -43,19 +43,19 @@ function formatSavedAt(iso: string): string {
 }
 
 /**
- * The Playhouse Demo console. A self-contained taste of the game loop:
+ * The Playhouse console — a self-contained taste of the game loop:
  *
  *  - Current play lives in local component state (`turns`).
  *  - Taking a turn appends a canned template — no engine, model, or network.
  *  - Saves are explicit (governance: "Saves require user action") and live only
- *    in this browser's localStorage across three demo slots.
+ *    in this browser's localStorage across three save cartridges.
  *
  * Everything resets on demand. None of it is memory, truth, or identity.
  */
 export function PlayhouseDemo() {
   const [turns, setTurns] = useState<DemoTurn[]>([]);
-  // Read the localStorage slots as an external store: stable on the server,
-  // hydration-safe, and re-rendered whenever a save/clear mutates them.
+  // Read the localStorage save cartridges as an external store: stable on the
+  // server, hydration-safe, and re-rendered whenever a save/eject mutates them.
   const slots = useSyncExternalStore(
     subscribeSlots,
     getSlotsSnapshot,
@@ -89,7 +89,7 @@ export function PlayhouseDemo() {
     if (slot) setTurns(slot.state.turns);
   }
 
-  function handleClearSlot(index: number) {
+  function handleEject(index: number) {
     clearSlot(index);
   }
 
@@ -98,120 +98,154 @@ export function PlayhouseDemo() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-      {/* Console */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface/60 p-2 gw-glow">
-        {/* Bezel header */}
-        <div className="flex items-center justify-between gap-3 px-3 py-2.5">
-          <div className="flex items-center gap-2">
-            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-rose/80" />
-            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-accent/80" />
-            <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-teal/80" />
-            <span className="ml-2 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-faint">
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle"
-              />
-              Playhouse Demo
-            </span>
-          </div>
+    <div className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
+      {/* Handheld console */}
+      <div className="gw-chassis relative overflow-hidden rounded-[1.75rem] border border-border-strong/60 bg-surface/70 p-3 shadow-2xl shadow-black/40 sm:p-4">
+        {/* Corner screws */}
+        {["left-3 top-3", "right-3 top-3", "left-3 bottom-3", "right-3 bottom-3"].map(
+          (pos) => (
+            <span
+              key={pos}
+              aria-hidden
+              className={`absolute ${pos} h-2 w-2 rounded-full bg-background ring-1 ring-border-strong/70`}
+            />
+          ),
+        )}
+
+        {/* Brand bar */}
+        <div className="flex items-center justify-between gap-3 px-4 py-1.5">
+          <span className="flex items-center gap-2 font-display text-[11px] font-bold uppercase tracking-[0.25em] text-faint">
+            <span
+              aria-hidden
+              className="h-2 w-2 rounded-full bg-teal gw-pulse"
+            />
+            GW · Handheld
+          </span>
           <span className="rounded-full bg-surface-2 px-2.5 py-0.5 font-mono text-[11px] text-muted ring-1 ring-border">
             Turn {turns.length}
           </span>
         </div>
 
         {/* Screen */}
-        <div className="relative rounded-xl border border-border bg-background/50 p-4 sm:p-5">
+        <div className="relative mt-1 rounded-2xl border border-border-strong/50 bg-background/70 p-3 shadow-inner sm:p-4">
           <div
             aria-hidden
-            className="gw-scanlines pointer-events-none absolute inset-0 rounded-xl opacity-70"
+            className="gw-scanlines pointer-events-none absolute inset-0 rounded-2xl opacity-70"
           />
-          <div className="relative max-h-[22rem] overflow-y-auto pr-1">
+          <div className="relative mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
+            <span className="text-teal">● game-log</span>
+            <span>local session</span>
+          </div>
+          <div className="relative max-h-[20rem] overflow-y-auto pr-1">
             <EventFeed events={turnsToEvents(turns)} />
           </div>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-3">
-          <p className="text-xs text-faint">
-            Take a few turns, then save your play to a slot.
-          </p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={takeTurn}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30 active:scale-95"
-            >
-              <span aria-hidden className="text-xs">
-                ▶
-              </span>
-              Take a turn
-            </button>
+        <div className="mt-3 flex flex-wrap items-center gap-3 px-2 pb-1 sm:justify-between">
+          {/* D-pad (decorative, desktop only) */}
+          <div aria-hidden className="relative hidden h-16 w-16 shrink-0 sm:block">
+            <span className="absolute left-1/2 top-1/2 h-5 w-16 -translate-x-1/2 -translate-y-1/2 rounded-md bg-surface-2 ring-1 ring-border" />
+            <span className="absolute left-1/2 top-1/2 h-16 w-5 -translate-x-1/2 -translate-y-1/2 rounded-md bg-surface-2 ring-1 ring-border" />
+            <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-border-strong/70" />
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-1 flex-wrap items-center justify-end gap-2 sm:flex-none">
             <button
               type="button"
               onClick={resetPlay}
               disabled={turns.length === 0}
-              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground disabled:opacity-40"
+              className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground disabled:opacity-40"
             >
+              <span
+                aria-hidden
+                className="grid h-6 w-6 place-items-center rounded-full bg-surface-2 font-display text-xs font-bold text-faint ring-1 ring-border"
+              >
+                B
+              </span>
               Clear
+            </button>
+            <button
+              type="button"
+              onClick={takeTurn}
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30 active:scale-95"
+            >
+              <span
+                aria-hidden
+                className="grid h-6 w-6 place-items-center rounded-full bg-background/20 font-display text-xs font-bold"
+              >
+                A
+              </span>
+              Take a turn
             </button>
           </div>
         </div>
       </div>
 
-      {/* Save slots — memory cartridges */}
-      <div className="flex flex-col rounded-2xl border border-border bg-surface/60 p-6">
+      {/* Save cartridge bay */}
+      <div className="flex flex-col rounded-2xl border border-border bg-surface/60 p-5 sm:p-6">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
-            <span aria-hidden>💾</span> Save slots
+          <h3 className="flex items-center gap-2 font-display text-base font-semibold text-foreground">
+            <span aria-hidden>🎮</span> Save cartridges
           </h3>
           <button
             type="button"
             onClick={handleResetAll}
             className="text-xs font-medium text-faint underline-offset-2 transition-colors hover:text-rose hover:underline"
           >
-            Reset all
+            Eject all
           </button>
         </div>
         <p className="mt-1 text-xs text-faint">
-          Stored only in this browser. Saving requires your action.
+          Browser saves only — stored in this browser, written by your action.
         </p>
 
         <ul className="mt-4 flex flex-col gap-3">
           {Array.from({ length: SLOT_COUNT }, (_, index) => {
             const slot = slots[index];
             const filled = Boolean(slot);
+            const cartNo = String(index + 1).padStart(2, "0");
             return (
               <li
                 key={index}
-                className={`rounded-xl border p-4 transition-colors ${
+                className={`gw-cartridge relative p-4 ring-1 ring-inset transition-colors ${
                   filled
-                    ? "border-teal/40 bg-teal/5"
-                    : "border-border bg-surface"
+                    ? "bg-teal/5 ring-teal/50"
+                    : "bg-surface ring-border"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <span className="flex items-center gap-2 font-mono text-xs font-semibold tracking-widest text-foreground">
                     <span
                       aria-hidden
-                      className={`grid h-6 w-6 place-items-center rounded-md text-xs ring-1 ${
-                        filled
-                          ? "bg-teal/15 text-teal ring-teal/40"
-                          : "bg-surface-2 text-faint ring-border"
+                      className={`h-2.5 w-2.5 rounded-sm ${
+                        filled ? "bg-teal" : "bg-border-strong"
                       }`}
-                    >
-                      {filled ? "▣" : "▢"}
-                    </span>
-                    Slot {index + 1}
+                    />
+                    SLOT {cartNo}
                   </span>
                   <span className="text-xs text-faint">
                     {filled && slot
                       ? `${slot.state.turns.length} turn${
                           slot.state.turns.length === 1 ? "" : "s"
                         } · ${formatSavedAt(slot.savedAt)}`
-                      : "Empty"}
+                      : "Empty bay"}
                   </span>
                 </div>
+
+                {/* Cartridge contacts */}
+                <div aria-hidden className="mt-3 flex gap-1">
+                  {Array.from({ length: 8 }, (_, c) => (
+                    <span
+                      key={c}
+                      className={`h-1.5 flex-1 rounded-sm ${
+                        filled ? "bg-teal/40" : "bg-surface-2"
+                      }`}
+                    />
+                  ))}
+                </div>
+
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="button"
@@ -231,11 +265,11 @@ export function PlayhouseDemo() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleClearSlot(index)}
+                    onClick={() => handleEject(index)}
                     disabled={!filled}
                     className="rounded-md px-3 py-1.5 text-xs font-medium text-faint transition-colors hover:text-rose disabled:opacity-40"
                   >
-                    Clear
+                    Eject
                   </button>
                 </div>
               </li>
@@ -246,8 +280,8 @@ export function PlayhouseDemo() {
         <p className="mt-4 flex items-start gap-2 rounded-lg bg-surface-2/60 p-3 text-xs leading-5 text-faint ring-1 ring-border">
           <span aria-hidden>🛡️</span>
           <span>
-            Reminder: play is not memory. These slots are a demo of explicit,
-            user-driven saving — nothing here syncs anywhere.
+            Reminder: play is not memory. These cartridges are a demo of
+            explicit, user-driven browser saves — nothing here syncs anywhere.
           </span>
         </p>
       </div>

@@ -60,7 +60,7 @@ const DOCUMENTS: {
 
 export default function DocsPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-12">
+    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
       <PageHeader
         eyebrow="Reference"
         title="Docs & governance"

@@ -31,7 +31,7 @@ export function PageHeader({
             {eyebrow}
           </span>
         ) : null}
-        <h1 className="mt-3 flex items-center gap-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="mt-3 flex items-center gap-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {icon ? (
             <span
               aria-hidden

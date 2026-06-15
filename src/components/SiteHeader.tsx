@@ -25,7 +25,7 @@ export function SiteHeader() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-nebula/50 to-transparent"
       />
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="group flex items-center gap-2.5">
           <span
             aria-hidden
@@ -35,16 +35,16 @@ export function SiteHeader() {
             <span className="relative">🎲</span>
           </span>
           <span className="flex flex-col leading-none">
-            <span className="text-sm font-semibold tracking-tight text-foreground">
+            <span className="font-display text-sm font-semibold tracking-tight text-foreground">
               Gaming Wing
             </span>
-            <span className="text-[11px] text-faint">
+            <span className="hidden text-[11px] text-faint min-[380px]:block">
               a governed AI playhouse
             </span>
           </span>
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5 sm:gap-1">
           {NAV.map((item) => {
             const active = isActive(pathname, item.href);
             return (
@@ -52,7 +52,7 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative rounded-full px-3 py-1.5 text-sm transition-colors ${
+                className={`relative rounded-full px-2.5 py-1.5 text-sm transition-colors sm:px-3 ${
                   active
                     ? "text-foreground"
                     : "text-muted hover:text-foreground"

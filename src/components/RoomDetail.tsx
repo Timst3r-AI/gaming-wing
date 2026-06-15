@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ACCENTS } from "@/lib/accents";
 import { getGamesForRoom } from "@/lib/games";
-import { getRoom } from "@/lib/rooms";
+import { getRoom, ROOMS } from "@/lib/rooms";
 import type { RoomId } from "@/lib/types";
 import { SESSIONS } from "@/data/sessions";
 import { WORLD_ENTITIES } from "@/data/world";
@@ -17,9 +17,12 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
   const games = getGamesForRoom(roomId);
   const sessions = SESSIONS.filter((session) => session.roomId === roomId);
   const entities = WORLD_ENTITIES.filter((entity) => entity.roomId === roomId);
+  const index = ROOMS.findIndex((r) => r.id === roomId);
+  const doorNo = String(index + 1).padStart(2, "0");
+  const otherRooms = ROOMS.filter((r) => r.id !== roomId);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-10">
+    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href="/rooms"
         className="inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-foreground"
@@ -27,8 +30,8 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
         <span aria-hidden>←</span> All rooms
       </Link>
 
-      {/* Room hero banner */}
-      <section className="relative mt-4 overflow-hidden rounded-3xl border border-border bg-surface/60 p-8 gw-glow sm:p-10">
+      {/* Room threshold banner */}
+      <section className="relative mt-4 overflow-hidden rounded-3xl border border-border bg-surface/60 p-6 gw-glow sm:p-10">
         <div aria-hidden className="gw-grid absolute inset-0 opacity-15" />
         <div
           aria-hidden
@@ -40,17 +43,17 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
         />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
           <span
-            className={`grid h-24 w-24 shrink-0 place-items-center rounded-3xl bg-background/40 text-5xl ring-1 backdrop-blur-sm gw-float ${accent.ring}`}
+            className={`grid h-24 w-24 shrink-0 place-items-center rounded-3xl rounded-t-[2.5rem] bg-background/40 text-5xl ring-1 backdrop-blur-sm gw-float ${accent.ring}`}
           >
             {room.icon}
           </span>
           <div>
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] ${accent.chip}`}
+              className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] ${accent.chip}`}
             >
-              Room
+              Room {doorNo}
             </span>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
               {room.name}
             </h1>
             <p className={`mt-2 text-lg font-medium ${accent.text}`}>
@@ -75,7 +78,7 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
 
       {/* Sample activities */}
       <section className="mt-12">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="font-display text-xl font-semibold text-foreground">
           What you&apos;ll do here
         </h2>
         <ul className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -97,7 +100,9 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
       {/* Games — the quest board */}
       <section className="mt-12">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-foreground">Quest board</h2>
+          <h2 className="font-display text-xl font-semibold text-foreground">
+            Quest board
+          </h2>
           <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-faint ring-1 ring-border">
             {games.length} games
           </span>
@@ -112,7 +117,7 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
       {/* Sessions */}
       {sessions.length > 0 ? (
         <section className="mt-12">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-display text-xl font-semibold text-foreground">
             Recent sessions
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -126,7 +131,7 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
       {/* World entities */}
       {entities.length > 0 ? (
         <section className="mt-12">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-display text-xl font-semibold text-foreground">
             Stewarded entities
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -150,6 +155,37 @@ export function RoomDetail({ roomId }: { roomId: RoomId }) {
           </Link>{" "}
           for the full set.
         </p>
+      </section>
+
+      {/* Other doorways */}
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold text-foreground">
+          Other doorways
+        </h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {otherRooms.map((other) => {
+            const oa = ACCENTS[other.accent];
+            return (
+              <Link
+                key={other.id}
+                href={`/rooms/${other.slug}`}
+                className={`group flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 transition-all duration-300 hover:-translate-y-0.5 ${oa.glowHover}`}
+              >
+                <span
+                  className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl rounded-t-2xl bg-surface-2 text-xl ring-1 ${oa.ring}`}
+                >
+                  {other.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold text-foreground">
+                    {other.name}
+                  </span>
+                  <span className={`text-xs ${oa.text}`}>Enter →</span>
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </section>
     </main>
   );

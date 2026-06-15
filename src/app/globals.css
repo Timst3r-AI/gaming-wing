@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 /*
- * Gaming Wing — a "funky governed game wing" theme.
+ * Gaming Wing — visual direction v0.3 ("enchanted game wing").
  *
  * A deep indigo night canvas lit by neon accents (amber, nebula, teal, rose,
- * sky), glowing panels, a faint world-map dot grid, and restrained, playful
- * motion. The aim is a memorable AI playhouse — not a corporate dashboard, and
- * not a cartoon. All motion respects `prefers-reduced-motion`.
+ * sky). The language is portals & enchanted doors, playable console hardware,
+ * and inventory/cartridge UI. Glowing panels, a faint world-map dot grid, and
+ * restrained, playful motion. All motion respects `prefers-reduced-motion`.
  */
 
 :root {
@@ -47,6 +47,7 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
 }
 
 body {
@@ -76,9 +77,13 @@ a {
   color: inherit;
 }
 
+.font-display {
+  font-family: var(--font-display), var(--font-sans), Arial, sans-serif;
+}
+
 /* --- Reusable visual utilities ---------------------------------------- */
 
-/* A tighter dot grid for inset panels (portals, the demo screen). */
+/* A tighter dot grid for inset panels (portals, the console screen). */
 .gw-grid {
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1.3px);
   background-size: 16px 16px;
@@ -107,7 +112,7 @@ a {
   animation: gw-pan 7s linear infinite alternate;
 }
 
-/* CRT-style scanlines for the demo "screen". */
+/* CRT-style scanlines for the console "screen". */
 .gw-scanlines {
   background-image: repeating-linear-gradient(
     to bottom,
@@ -116,6 +121,24 @@ a {
     transparent 1px,
     transparent 3px
   );
+}
+
+/* Brushed-metal console chassis. */
+.gw-chassis {
+  background-image:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 40%),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+/* Cartridge silhouette: a clean cut top-right corner like a game cart. */
+.gw-cartridge {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
 }
 
 .gw-rise {
@@ -132,6 +155,12 @@ a {
 }
 .gw-spin-rev {
   animation: gw-spin 72s linear infinite reverse;
+}
+.gw-pulse {
+  animation: gw-pulse 3s ease-in-out infinite;
+}
+.gw-marquee {
+  animation: gw-marquee 38s linear infinite;
 }
 
 @keyframes gw-pan {
@@ -170,6 +199,22 @@ a {
 @keyframes gw-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes gw-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+@keyframes gw-marquee {
+  to {
+    transform: translateX(-50%);
   }
 }
 

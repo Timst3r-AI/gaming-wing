@@ -111,7 +111,7 @@ export const GAMES: Game[] = [
     kind: "arcade",
     roomId: "arcade",
     summary:
-      "Repeat the growing pattern. A warm, replayable memory round you can run back instantly.",
+      "Repeat the growing pattern. A warm, replayable recall round you can run back instantly.",
     players: "1 + Room Agent",
     difficulty: "casual",
     hostedBy: "Room Agent",
