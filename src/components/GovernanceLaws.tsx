@@ -1,7 +1,7 @@
 import { GOVERNANCE_LAWS } from "@/lib/governance";
 
 /**
- * Renders the wing's governance laws. `variant="grid"` is the full card grid;
+ * Renders the arena's governance laws. `variant="grid"` is the full card grid;
  * `variant="list"` is a compact numbered list for sidebars and docs intros.
  * The law text itself comes verbatim from `GOVERNANCE_LAWS` and is never
  * altered here.

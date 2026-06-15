@@ -1,7 +1,7 @@
 import type { Room, RoomId } from "@/lib/types";
 
 /**
- * The room registry. Each room is a wing of the gaming arena with its own
+ * The room registry. Each room is a distinct space in the gaming arena with its own
  * hosting agents and sample activities. Routes under /rooms/[slug] read from
  * this single source of truth.
  */

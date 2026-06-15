@@ -1,7 +1,7 @@
 import type { WorldEntity } from "@/lib/types";
 
 /**
- * Mock world entities — the imaginative furniture created in the wing. Each is
+ * Mock world entities — the imaginative furniture created in the arena. Each is
  * stewarded by an agent for consistency, but remains invented material. None
  * of it references anything real.
  */

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Gaming Wing — visual direction v0.3 ("enchanted game wing").
+ * The AI Gaming Arena — visual direction v0.3 ("enchanted game arena").
  *
  * A deep indigo night canvas lit by neon accents (amber, nebula, teal, rose,
  * sky). The language is portals & enchanted doors, playable console hardware,
@@ -20,7 +20,7 @@
   --muted: #bbb5e6;
   --faint: #847ec0;
 
-  --accent: #f5b14c; /* lamplight amber — the wing's primary */
+  --accent: #f5b14c; /* lamplight amber — the arena's primary */
   --accent-soft: #ffd79a;
   --nebula: #b794ff; /* portal purple */
   --teal: #5eead4;
@@ -218,7 +218,7 @@ a {
   }
 }
 
-/* Drifting motes marching along the hero road into the wing. */
+/* Drifting motes marching along the hero road into the arena. */
 .gw-dash {
   animation: gw-dash 24s linear infinite;
 }

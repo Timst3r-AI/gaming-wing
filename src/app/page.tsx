@@ -19,7 +19,7 @@ const STATS = [
 export default function Home() {
   return (
     <main>
-      {/* Hero — an atmospheric threshold into the wing */}
+      {/* Hero — an atmospheric threshold into the arena */}
       <section className="relative isolate overflow-hidden">
         <HeroBackdrop />
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">

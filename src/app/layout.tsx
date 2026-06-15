@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Display face for headings, the wordmark, and console labels — gives the wing
+// Display face for headings, the wordmark, and console labels — gives the arena
 // a distinct, game-like voice without a runtime dependency (built into Next).
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",

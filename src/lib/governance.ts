@@ -1,8 +1,8 @@
 import type { GovernanceLaw } from "@/lib/types";
 
 /**
- * The governance laws of the Gaming Wing. These are the public, load-bearing
- * promises of the wing: play stays play, and nothing here is treated as truth,
+ * The governance laws of The AI Gaming Arena. These are the public, load-bearing
+ * promises of the arena: play stays play, and nothing here is treated as truth,
  * memory, or identity. They are rendered throughout the UI and mirrored in
  * docs/constitution/gaming-wing-constitution.md.
  */

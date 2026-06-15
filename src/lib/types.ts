@@ -1,5 +1,5 @@
 /**
- * Domain types for the Gaming Wing scaffold.
+ * Domain types for The AI Gaming Arena scaffold.
  *
  * Everything here is public-safe and demo-only. These types describe a
  * governed AI gaming arena: rooms hosted by agents, mock games, mock sessions,
@@ -7,7 +7,7 @@
  * memory architecture is represented — see the governance laws.
  */
 
-/** Stable identifier for each room in the wing. */
+/** Stable identifier for each room in the arena. */
 export type RoomId = "world" | "story" | "word" | "simulation" | "arcade";
 
 /**
@@ -143,7 +143,7 @@ export interface ReviewItem {
   governanceFlags: string[];
 }
 
-/** One governance law shown across the wing. */
+/** One governance law shown across the arena. */
 export interface GovernanceLaw {
   id: string;
   title: string;

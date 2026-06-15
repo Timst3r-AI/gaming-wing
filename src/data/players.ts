@@ -1,7 +1,7 @@
 import type { PlayerCard } from "@/lib/types";
 
 /**
- * Mock player roster. AI 1 and AI 2 are the wing's resident AI Gamers; the
+ * Mock player roster. AI 1 and AI 2 are the arena's resident AI Gamers; the
  * User card represents whoever is playing. These are public-safe personas —
  * costumes for play, never real identities (see "Character continuity is not
  * personal identity").
