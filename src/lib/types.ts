@@ -2,7 +2,7 @@
  * Domain types for the Gaming Wing scaffold.
  *
  * Everything here is public-safe and demo-only. These types describe a
- * governed "AI playhouse": rooms hosted by agents, mock games, mock sessions,
+ * governed AI gaming arena: rooms hosted by agents, mock games, mock sessions,
  * world entities, and a review queue. No private material, identities, or
  * memory architecture is represented — see the governance laws.
  */

@@ -39,7 +39,7 @@ export function SiteHeader() {
               Gaming Wing
             </span>
             <span className="hidden text-[11px] text-faint min-[380px]:block">
-              a governed AI playhouse
+              a governed AI gaming arena
             </span>
           </span>
         </Link>

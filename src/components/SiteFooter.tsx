@@ -20,7 +20,7 @@ export function SiteFooter() {
             <p className="text-sm font-semibold text-foreground">Gaming Wing</p>
           </div>
           <p className="mt-3 text-sm leading-6 text-muted">
-            A public-safe, frontend-only scaffold for a governed AI playhouse.
+            A public-safe, frontend-only scaffold for a governed AI gaming arena.
             Play is play — never memory, truth, or identity.
           </p>
           <div className="mt-4 flex gap-1.5" aria-hidden>

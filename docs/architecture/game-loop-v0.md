@@ -6,7 +6,7 @@ network — just mock data and local state.
 
 ## v0: what actually happens today
 
-The interactive surface is the **Playhouse Demo** on the landing page
+The interactive surface is the **gaming console** demo on the landing page
 ([`src/components/PlayhouseDemo.tsx`](../../src/components/PlayhouseDemo.tsx)).
 
 ```
@@ -94,7 +94,7 @@ must respect the governance laws and the
   interface so the UI doesn't change.
 - **Session persistence** — replace demo `localStorage` slots with a real store
   *only* if explicit-save and "state is not truth" are preserved.
-- **Companion behavior** — AI 1 / AI 2 turn-taking logic.
+- **AI Gamer behavior** — AI 1 / AI 2 turn-taking logic.
 - **Export** — emit reviewed, fiction-only artifacts via the
   [adoption adapter](./adoption-adapter.md).
 

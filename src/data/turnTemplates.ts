@@ -1,5 +1,5 @@
 /**
- * Canned turn templates for the Playhouse Demo console. Taking a turn picks one
+ * Canned turn templates for the gaming console demo. Taking a turn picks one
  * of these at random and appends it to local component state — a tiny taste of
  * the game loop without any engine, model, or network. Everything here is
  * fiction the moment it appears on screen.

@@ -1,6 +1,6 @@
 # The Gaming Wing Constitution
 
-> A governed AI playhouse. Public-safe by design.
+> A governed AI gaming arena. Public-safe by design.
 
 This document states what the Gaming Wing **is**, what it is **for**, and the
 **laws** that keep it safe and warm. It is written for everyone — players,
@@ -9,13 +9,13 @@ code and UI mirror.
 
 ## Purpose
 
-The Gaming Wing is a room-based place to **play** with AI companions. A **User**
+The Gaming Wing is a room-based place to **play** with AI Gamers. A **User**
 plays alongside **AI 1** and **AI 2**, hosted by a **Game Master**, a **World
 Agent**, and **Room Agents**, across five rooms: worldbuilding, story quests,
 word games, simulation, and arcade.
 
 Play here is meant to be imaginative, replayable, and low-stakes. The wing should
-feel like a welcoming playhouse with clear house rules — not a clone of any
+feel like a welcoming game space with clear house rules — not a clone of any
 existing product, and not a system of record for anything real.
 
 ## The seven laws
@@ -71,7 +71,7 @@ Agent, Room Agent.
 To keep the wing public, the project uses only these role terms:
 
 - **User** — the person playing.
-- **AI 1**, **AI 2** — resident AI companions.
+- **AI 1**, **AI 2** — resident AI Gamers.
 - **Game Master** — narrates and adjudicates story play.
 - **NPC** — non-player characters within a story.
 - **World Agent** — stewards worldbuilding for consistency.

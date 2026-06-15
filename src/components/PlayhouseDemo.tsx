@@ -43,7 +43,7 @@ function formatSavedAt(iso: string): string {
 }
 
 /**
- * The Playhouse console — a self-contained taste of the game loop:
+ * The gaming console — a self-contained taste of the game loop:
  *
  *  - Current play lives in local component state (`turns`).
  *  - Taking a turn appends a canned template — no engine, model, or network.

@@ -1,7 +1,7 @@
 # Data Model v0
 
 The domain types for the Gaming Wing live in
-[`src/lib/types.ts`](../../src/lib/types.ts). They describe a governed playhouse
+[`src/lib/types.ts`](../../src/lib/types.ts). They describe a governed gaming arena
 in **public-safe, demo-only** terms. Nothing here is a database schema — these
 are the shapes of mock data and local state in this pass.
 
@@ -24,7 +24,7 @@ GovernanceLaw
 
 ### Room
 
-A wing of the playhouse. Source of truth for the `/rooms/[slug]` routes.
+A room within the Gaming Wing. Source of truth for the `/rooms/[slug]` routes.
 
 | Field | Type | Notes |
 | --- | --- | --- |

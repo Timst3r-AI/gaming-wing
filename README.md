@@ -1,6 +1,6 @@
 # Gaming Wing
 
-A **public-safe, frontend-only scaffold** for a governed AI playhouse — a
+A **public-safe, frontend-only scaffold** for a governed AI gaming arena — a
 room-based wing where a **User** plays alongside **AI 1** and **AI 2**, guided
 by a **Game Master**, a **World Agent**, and **Room Agents**.
 
@@ -54,7 +54,7 @@ The full statement lives in
 - **Simulation Yard** — light systems play: a town, a garden, a tiny economy.
 - **Arcade** — fast, replayable score-attack and reflex rounds.
 
-### The Playhouse Demo
+### The gaming console demo
 
 The landing page includes a small interactive console. Take a few turns (canned,
 local-only), then save them into one of three **demo save slots** backed by

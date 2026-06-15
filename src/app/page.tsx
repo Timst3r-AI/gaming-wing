@@ -8,6 +8,7 @@ import { PlayerCardView } from "@/components/PlayerCardView";
 import { GovernanceLaws } from "@/components/GovernanceLaws";
 import { PlayhouseDemo } from "@/components/PlayhouseDemo";
 import { HeroPortal } from "@/components/HeroPortal";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { RoomMarquee } from "@/components/RoomMarquee";
 
 const STATS = [
@@ -19,65 +20,68 @@ const STATS = [
 export default function Home() {
   return (
     <main>
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        {/* Hero — the threshold */}
-        <section className="grid items-center gap-10 pt-12 pb-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:pb-16">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium text-muted">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle" />
-              Public-safe scaffold · frontend only
-            </span>
-            <h1 className="mt-5 font-display text-[2.75rem] font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl">
-              Step into a governed{" "}
-              <span className="gw-gradient-text">AI playhouse</span>.
-            </h1>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
-              Beyond this threshold is a room-based wing where the User plays
-              alongside AI 1 and AI 2 — guided by a Game Master, a World Agent,
-              and Room Agents. Worldbuilding, story quests, word games,
-              simulation, and arcade play, all under one clear rule: play is
-              play, never memory.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/rooms"
-                className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30"
-              >
-                Enter the wing
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
-              <Link
-                href="/docs"
-                className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-border-strong hover:bg-surface/60"
-              >
-                Read the governance
-              </Link>
+      {/* Hero — an atmospheric threshold into the wing */}
+      <section className="relative isolate overflow-hidden">
+        <HeroBackdrop />
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <div className="grid items-center gap-10 pt-12 pb-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:pb-16">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1 text-xs font-medium text-muted backdrop-blur-sm">
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-teal gw-twinkle" />
+                Public-safe scaffold · frontend only
+              </span>
+              <h1 className="mt-5 font-display text-[2.75rem] font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl">
+                Step into a governed{" "}
+                <span className="gw-gradient-text">AI gaming arena</span>.
+              </h1>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
+                Beyond this threshold is a room-based wing where the User plays
+                alongside AI 1 and AI 2 — guided by a Game Master, a World
+                Agent, and Room Agents. Worldbuilding, story quests, word games,
+                simulation, and arcade play, all under one clear rule: play is
+                play, never memory.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/rooms"
+                  className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft hover:shadow-accent/30"
+                >
+                  Enter the wing
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </Link>
+                <Link
+                  href="/docs"
+                  className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-border-strong hover:bg-surface/60"
+                >
+                  Read the governance
+                </Link>
+              </div>
+
+              {/* Stat chips */}
+              <dl className="mt-10 flex flex-wrap gap-3">
+                {STATS.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="flex items-baseline gap-2 rounded-xl border border-border bg-surface/50 px-4 py-2 backdrop-blur-sm"
+                  >
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="font-display text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </dd>
+                    <span className="text-xs uppercase tracking-wide text-faint">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </dl>
             </div>
 
-            {/* Stat chips */}
-            <dl className="mt-10 flex flex-wrap gap-3">
-              {STATS.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex items-baseline gap-2 rounded-xl border border-border bg-surface/50 px-4 py-2"
-                >
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd className="font-display text-2xl font-bold text-foreground">
-                    {stat.value}
-                  </dd>
-                  <span className="text-xs uppercase tracking-wide text-faint">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </dl>
+            <HeroPortal />
           </div>
-
-          <HeroPortal />
-        </section>
-      </div>
+        </div>
+      </section>
 
       {/* Room marquee — full bleed */}
       <RoomMarquee />
@@ -154,7 +158,7 @@ export default function Home() {
             Meet the players
           </h2>
           <p className="mt-2 max-w-2xl text-muted">
-            AI 1 and AI 2 are the wing&apos;s resident companions. The User is
+            AI 1 and AI 2 are the wing&apos;s resident AI Gamers. The User is
             you — and the wing arranges itself around your choices.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -199,7 +203,7 @@ export default function Home() {
                 <ul className="mt-3 space-y-1.5 text-sm text-muted">
                   <li>A frontend-only, Vercel-ready Next.js scaffold.</li>
                   <li>Mock data, local state, and demo-only browser saves.</li>
-                  <li>A governed, room-based playhouse you can extend.</li>
+                  <li>A governed, room-based gaming arena you can extend.</li>
                 </ul>
               </div>
               <div className="rounded-2xl border border-rose/20 bg-rose/5 p-5">

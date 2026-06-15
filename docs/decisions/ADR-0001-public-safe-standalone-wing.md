@@ -6,8 +6,8 @@
 
 ## Context
 
-We are starting the Gaming Wing: a room-based "AI playhouse" where a User plays
-alongside AI companions. We need a first build that is safe to develop in the
+We are starting the Gaming Wing: a room-based AI gaming arena where a User plays
+alongside AI Gamers. We need a first build that is safe to develop in the
 open and easy to extend, without prematurely committing to backend services,
 identity handling, or any integration with a private host system.
 
