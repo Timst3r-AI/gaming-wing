@@ -42,7 +42,7 @@ Key properties:
 ## The event shapes
 
 A turn is recorded as a `DemoTurn` and rendered through the same `GameEvent`
-shape the rest of the wing uses:
+shape the rest of the arena uses:
 
 | Field | Meaning |
 | --- | --- |

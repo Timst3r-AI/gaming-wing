@@ -1,10 +1,10 @@
 # Boundary Map
 
-This map draws the **public-safe line** for the Gaming Wing: what lives inside
+This map draws the **public-safe line** for The AI Gaming Arena: what lives inside
 this repository in the current pass, and what is deliberately kept out. It exists
 so the boundary is explicit and easy to defend in review.
 
-## Inside the wing (this pass)
+## Inside the arena (this pass)
 
 - **Next.js App Router frontend** — pages, layouts, and components in `src/`.
 - **Mock data** — players, sessions, events, world entities, and review items in
@@ -21,7 +21,7 @@ so the boundary is explicit and easy to defend in review.
 Everything inside is **fiction, mock, or local**. None of it is a system of
 record.
 
-## Outside the wing (deliberately excluded this pass)
+## Outside the arena (deliberately excluded this pass)
 
 The following are **not** present, by design:
 
@@ -49,7 +49,7 @@ If a term isn't on this list, it doesn't belong in this repository.
 
 ```
  ┌──────────────────────────────────────────────┐
- │  Browser (this wing)                          │
+ │  Browser (this arena)                         │
  │                                               │
  │   mock data ──► React state ──► UI            │
  │                      │                        │
@@ -72,7 +72,7 @@ If a term isn't on this list, it doesn't belong in this repository.
 - Data never leaves the browser on its own.
 - The only path outward is an **explicit export** that passes a **human review**
   — see the [adoption adapter](./adoption-adapter.md).
-- There is no inbound path that writes private material into this wing.
+- There is no inbound path that writes private material into this arena.
 
 ## How to keep the boundary
 

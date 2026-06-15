@@ -1,19 +1,19 @@
-# ADR-0001: Public-Safe Standalone Wing
+# ADR-0001: Public-Safe Standalone Arena
 
 - **Status:** Accepted
 - **Date:** 2026-06-14
-- **Deciders:** Gaming Wing maintainers
+- **Deciders:** The AI Gaming Arena maintainers
 
 ## Context
 
-We are starting the Gaming Wing: a room-based AI gaming arena where a User plays
+We are starting The AI Gaming Arena: a room-based gaming arena where a User plays
 alongside AI Gamers. We need a first build that is safe to develop in the
 open and easy to extend, without prematurely committing to backend services,
 identity handling, or any integration with a private host system.
 
 Two pressures shaped this decision:
 
-1. **Safety / privacy.** The wing is related to a larger, private context that
+1. **Safety / privacy.** The arena is related to a larger, private context that
    must not leak. The public repository can contain **no** private names,
    archives, memory architecture, or internals.
 2. **Velocity / clarity.** A first build should be small enough to reason about
@@ -22,7 +22,7 @@ Two pressures shaped this decision:
 
 ## Decision
 
-Build the Gaming Wing as a **public-safe, standalone, frontend-only** Next.js
+Build The AI Gaming Arena as a **public-safe, standalone, frontend-only** Next.js
 scaffold in this pass.
 
 Concretely:

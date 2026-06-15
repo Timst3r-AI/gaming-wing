@@ -1,20 +1,20 @@
-# The Gaming Wing Constitution
+# The AI Gaming Arena Constitution
 
 > A governed AI gaming arena. Public-safe by design.
 
-This document states what the Gaming Wing **is**, what it is **for**, and the
+This document states what The AI Gaming Arena **is**, what it is **for**, and the
 **laws** that keep it safe and warm. It is written for everyone — players,
 maintainers, and any future host system — and it is the source of truth that the
 code and UI mirror.
 
 ## Purpose
 
-The Gaming Wing is a room-based place to **play** with AI Gamers. A **User**
+The AI Gaming Arena is a room-based place to **play** with AI Gamers. A **User**
 plays alongside **AI 1** and **AI 2**, hosted by a **Game Master**, a **World
 Agent**, and **Room Agents**, across five rooms: worldbuilding, story quests,
 word games, simulation, and arcade.
 
-Play here is meant to be imaginative, replayable, and low-stakes. The wing should
+Play here is meant to be imaginative, replayable, and low-stakes. The arena should
 feel like a welcoming game space with clear house rules — not a clone of any
 existing product, and not a system of record for anything real.
 
@@ -54,21 +54,21 @@ time. There is no silent or automatic persistence.
 
 ### 6. Adoption into a host AI House must be export-only and review-only.
 
-If a host AI House ever adopts content created in this wing, it may happen only
+If a host AI House ever adopts content created in this arena, it may happen only
 through an **explicit export** that a **human reviews first**. There is no
 automatic or two-way sync. See the
 [adoption adapter](../architecture/adoption-adapter.md).
 
 ### 7. No private material may enter this public repo.
 
-This is a **public, standalone** wing. Private names, personal archives, internal
+This is a **public, standalone** arena. Private names, personal archives, internal
 memory architecture, and any project internals are kept out **by design**. The
 vocabulary is deliberately generic: User, AI 1, AI 2, Game Master, NPC, World
 Agent, Room Agent.
 
 ## Public-safe vocabulary
 
-To keep the wing public, the project uses only these role terms:
+To keep the arena public, the project uses only these role terms:
 
 - **User** — the person playing.
 - **AI 1**, **AI 2** — resident AI Gamers.

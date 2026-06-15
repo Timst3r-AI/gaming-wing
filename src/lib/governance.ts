@@ -41,12 +41,12 @@ export const GOVERNANCE_LAWS: GovernanceLaw[] = [
     id: "adoption-export-review-only",
     title: "Adoption is export-only and review-only.",
     detail:
-      "If a host AI House ever adopts content from this wing, it may only happen through an explicit export that a human reviews first.",
+      "If a host AI House ever adopts content from this arena, it may only happen through an explicit export that a human reviews first.",
   },
   {
     id: "no-private-material",
     title: "No private material enters this repo.",
     detail:
-      "This is a public, standalone wing. Private names, archives, and internal architecture stay out by design.",
+      "This is a public, standalone arena. Private names, archives, and internal architecture stay out by design.",
   },
 ];

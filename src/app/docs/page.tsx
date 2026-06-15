@@ -80,8 +80,7 @@ export default function DocsPage() {
       <section className="mt-14">
         <h2 className="text-lg font-semibold text-foreground">Documents</h2>
         <p className="mt-2 text-sm text-muted">
-          These live as Markdown in the repository. Paths are shown relative to
-          the project root.
+          These live as Markdown in the repository.
         </p>
         <ul className="mt-5 grid gap-4 sm:grid-cols-2">
           {DOCUMENTS.map((doc) => (
@@ -102,9 +101,6 @@ export default function DocsPage() {
                 <p className="mt-1.5 text-sm leading-6 text-muted">
                   {doc.summary}
                 </p>
-                <code className="mt-3 inline-block max-w-full truncate rounded-md bg-surface-2 px-2 py-1 font-mono text-xs text-faint ring-1 ring-border">
-                  {doc.path}
-                </code>
               </div>
             </li>
           ))}

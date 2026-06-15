@@ -2,27 +2,27 @@
 
 > Law 6: **Adoption into a host AI House must be export-only and review-only.**
 
-This document describes the **seam** by which content created in the Gaming Wing
+This document describes the **seam** by which content created in The AI Gaming Arena
 could ever be adopted by a host AI House. It is a **design contract**, not an
 implementation — nothing in this pass exports anything. The `/review` room is a
 **mock** of the review gate, and that is as far as it goes today.
 
 ## Principles
 
-1. **Export-only.** The wing can emit artifacts. It never accepts an inbound
+1. **Export-only.** The arena can emit artifacts. It never accepts an inbound
    write of private material, and there is no two-way sync.
 2. **Review-only.** No artifact is adopted without a **human review** that
    approves it first.
 3. **Fiction-only.** Only material that is clearly play — not memory, not truth,
    not identity — is eligible (laws 1–4).
 4. **Private-material-free.** Nothing carrying private names, archives, or
-   internals may pass (law 7). In practice the wing never contains such material
+   internals may pass (law 7). In practice the arena never contains such material
    to begin with.
 
 ## The one-way flow
 
 ```
- Gaming Wing                Review gate                 Host AI House
+ AI Gaming Arena            Review gate                 Host AI House
  (this repo)                (human-in-loop)             (out of scope)
 
  play / artifact  ──export──►  ReviewItem  ──approve──►  adopt (read-only import)
@@ -35,7 +35,7 @@ implementation — nothing in this pass exports anything. The `/review` room is 
          └──────────────  NO inbound path  ───────────────────┘
 ```
 
-There is intentionally **no arrow back** into the wing. Adoption cannot write
+There is intentionally **no arrow back** into the arena. Adoption cannot write
 anything into this repository.
 
 ## Artifact shape (proposed, not built)

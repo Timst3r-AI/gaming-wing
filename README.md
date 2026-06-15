@@ -1,7 +1,7 @@
-# Gaming Wing
+# The AI Gaming Arena
 
 A **public-safe, frontend-only scaffold** for a governed AI gaming arena — a
-room-based wing where a **User** plays alongside **AI 1** and **AI 2**, guided
+room-based arena where a **User** plays alongside **AI 1** and **AI 2**, guided
 by a **Game Master**, a **World Agent**, and **Room Agents**.
 
 This first build is intentionally small and self-contained: mock data, local
@@ -15,7 +15,7 @@ deployed**, and it contains **no private material** of any kind.
 ## The governance laws
 
 Every room inherits the same laws. They are the public, load-bearing promises
-of the wing:
+of the arena:
 
 1. **Play is not memory.**
 2. **Game state is not user truth.**
@@ -101,7 +101,7 @@ npm start        # serve the production build
 - [Game loop v0](docs/architecture/game-loop-v0.md) — how a turn flows today.
 - [Data model v0](docs/architecture/data-model-v0.md) — the domain types.
 - [Adoption adapter](docs/architecture/adoption-adapter.md) — the export-only, review-only seam.
-- [ADR-0001](docs/decisions/ADR-0001-public-safe-standalone-wing.md) — why a public-safe standalone wing.
+- [ADR-0001](docs/decisions/ADR-0001-public-safe-standalone-wing.md) — why a public-safe standalone arena.
 
 ---
 
