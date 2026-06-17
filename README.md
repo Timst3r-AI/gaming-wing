@@ -96,6 +96,7 @@ npm start        # serve the production build
 
 ## Documentation
 
+- [Architecture overview](docs/architecture/overview.md) — the full system map (start here).
 - [Constitution](docs/constitution/gaming-wing-constitution.md) — purpose and the seven laws.
 - [Boundary map](docs/architecture/boundary-map.md) — what's in, what's deliberately out.
 - [Game loop v0](docs/architecture/game-loop-v0.md) — how a turn flows today.

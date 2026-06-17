@@ -15,6 +15,13 @@ const DOCUMENTS: {
   icon: string;
 }[] = [
   {
+    title: "Architecture Overview",
+    path: "docs/architecture/overview.md",
+    summary:
+      "The full system map — stack, structure, governance, the games subsystem, persistence, and the adoption boundary.",
+    icon: "🧭",
+  },
+  {
     title: "The AI Gaming Arena Constitution",
     path: "docs/constitution/gaming-wing-constitution.md",
     summary:
