@@ -61,7 +61,7 @@ export function EventLog({
   return (
     <div className="rounded-2xl border border-border bg-background/50 p-4">
       <div className="mb-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
-        <span className="text-teal">● event log</span>
+        <span className="text-teal">● turn log</span>
         <span>local session</span>
       </div>
       {shown.length === 0 ? (

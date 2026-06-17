@@ -92,6 +92,13 @@ function balancedAction(r: Resources): Action {
   return actionById(LOW_TO_ACTION[low]);
 }
 
+// The growth-pushing play — but tend soil costs water + light, so steer to a
+// resource top-up when those are running low.
+function boldAction(r: Resources): Action {
+  if (r.water >= 2 && r.light >= 2) return actionById("soil");
+  return actionById(r.water <= r.light ? "water" : "greenhouse");
+}
+
 interface SeedlingSave {
   version: 1;
   turn: number;
@@ -185,7 +192,7 @@ export function SeedlingCommonsGame() {
   let ai2: string | undefined;
   if (started && !finished) {
     ai1 = `Plays safe: ${balancedAction(resources).label}.`;
-    ai2 = "Goes bold: Tend soil.";
+    ai2 = `Goes bold: ${boldAction(resources).label}.`;
   } else if (finished) {
     ai1 = "Tidy little plot.";
     ai2 = "Run it greener next time!";

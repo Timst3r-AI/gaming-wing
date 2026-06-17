@@ -87,7 +87,7 @@ export function AIGamerPanel({
         />
       </div>
       <p className="mt-2 text-[11px] leading-4 text-faint">
-        Scripted demo teammates — not real AI, and not memory.
+        Local demo turns only · browser-only · no memory
       </p>
     </div>
   );

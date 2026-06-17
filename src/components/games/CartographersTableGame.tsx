@@ -109,8 +109,10 @@ export function CartographersTableGame() {
   let ai1: string | undefined;
   let ai2: string | undefined;
   if (started && step) {
-    ai1 = `Picks ${step.cards[stepIndex % step.cards.length].name}.`;
-    ai2 = `Likes ${step.cards[(stepIndex + 1) % step.cards.length].name}.`;
+    const a = step.cards[stepIndex % step.cards.length];
+    const b = step.cards[(stepIndex + 1) % step.cards.length];
+    ai1 = `I'd pick ${a.name}.`;
+    ai2 = `${b.name}? ${b.blurb}.`;
   } else if (finished) {
     ai1 = "A fine little region.";
     ai2 = "Love that mystery.";
