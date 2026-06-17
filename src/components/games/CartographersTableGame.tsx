@@ -28,7 +28,6 @@ interface Piece {
   id: string;
   label: string;
   icon: string;
-  /** Tile background + ring classes. */
   tile: string;
 }
 
@@ -47,8 +46,162 @@ const PIECES: Piece[] = [
   { id: "mystery", label: "Mystery", icon: "🔮", tile: "bg-nebula/25 ring-nebula/50" },
 ];
 
+// Pieces that bring a little resident/agent token to live on the tile.
+const TOKEN: Record<string, string> = {
+  cottage: "🧑‍🌾",
+  market: "🧙",
+  forest: "🐇",
+  lantern: "🧚",
+};
+
 function pieceById(id: string | null): Piece | undefined {
   return id ? PIECES.find((p) => p.id === id) : undefined;
+}
+
+// --- board helpers (all deterministic) --------------------------------------
+
+function neighbors(i: number): number[] {
+  const x = i % COLS;
+  const y = Math.floor(i / COLS);
+  const out: number[] = [];
+  if (x > 0) out.push(i - 1);
+  if (x < COLS - 1) out.push(i + 1);
+  if (y > 0) out.push(i - COLS);
+  if (y < ROWS - 1) out.push(i + COLS);
+  return out;
+}
+
+function adjHas(board: string[], i: number, ids: string[]): boolean {
+  return neighbors(i).some((n) => ids.includes(board[n]));
+}
+
+function has(board: string[], id: string): boolean {
+  return board.includes(id);
+}
+
+function countOf(board: string[], id: string): number {
+  return board.filter((c) => c === id).length;
+}
+
+function adjPair(board: string[], a: string, b: string): boolean {
+  return board.some((cell, i) => cell === a && adjHas(board, i, [b]));
+}
+
+function pathLinked(board: string[]): boolean {
+  return board.some(
+    (cell, i) => cell === "path" && adjHas(board, i, ["cottage", "market", "tower"]),
+  );
+}
+
+function realmMetrics(board: string[]): {
+  harmony: number;
+  folk: number;
+  linked: number;
+} {
+  let harmony = 0;
+  let folk = 0;
+  let linked = 0;
+  board.forEach((cell, i) => {
+    if (!cell) return;
+    if (TOKEN[cell]) folk += 1;
+    if (cell === "garden") {
+      harmony += 1;
+      if (adjHas(board, i, ["cottage"])) harmony += 1;
+    } else if (cell === "pond") {
+      harmony += 1;
+    } else if (cell === "lantern") {
+      harmony += 1;
+      if (adjHas(board, i, ["path"])) harmony += 1;
+    } else if (cell === "bridge") {
+      if (adjHas(board, i, ["pond"])) harmony += 1;
+    } else if (cell === "path") {
+      if (adjHas(board, i, ["cottage", "market", "tower", "path"])) linked += 1;
+    }
+  });
+  return { harmony, folk, linked };
+}
+
+function countBoard(board: string[]): Record<string, number> {
+  const c: Record<string, number> = {};
+  for (const cell of board) if (cell) c[cell] = (c[cell] ?? 0) + 1;
+  return c;
+}
+
+// --- AI Gamer requests (deterministic) --------------------------------------
+
+interface Req {
+  label: string;
+  reaction: string;
+  test: (board: string[]) => boolean;
+}
+
+const AI1_REQUESTS: Req[] = [
+  { label: "Place a Cottage.", reaction: "Good start.", test: (b) => has(b, "cottage") },
+  { label: "Add a Market.", reaction: "Folk will gather.", test: (b) => has(b, "market") },
+  { label: "Connect a building with a Path.", reaction: "Nice link.", test: pathLinked },
+  { label: "Raise a Tower.", reaction: "Eyes on the horizon.", test: (b) => has(b, "tower") },
+  { label: "Lay another Path.", reaction: "Tidy.", test: (b) => countOf(b, "path") >= 2 },
+];
+
+const AI2_REQUESTS: Req[] = [
+  { label: "Put a Garden by a Cottage.", reaction: "That feels cosy.", test: (b) => adjPair(b, "garden", "cottage") },
+  { label: "Add a Lantern near a Path.", reaction: "Warm glow.", test: (b) => adjPair(b, "lantern", "path") },
+  { label: "Add a Pond.", reaction: "Lovely water.", test: (b) => has(b, "pond") },
+  { label: "Give the realm a Forest.", reaction: "Wild and green.", test: (b) => has(b, "forest") },
+  { label: "Leave a Mystery.", reaction: "Intriguing.", test: (b) => has(b, "mystery") },
+];
+
+function currentReqIdx(board: string[], reqs: Req[]): number {
+  return reqs.findIndex((r) => !r.test(board));
+}
+
+function reactionIfSatisfied(
+  before: string[],
+  after: string[],
+  reqs: Req[],
+): string | null {
+  const bi = currentReqIdx(before, reqs);
+  if (bi < 0) return null;
+  return reqs[bi].test(after) ? reqs[bi].reaction : null;
+}
+
+// Suggest an empty tile that helps build a connected realm.
+function suggestTile(board: string[]): number | null {
+  const adj = board.findIndex((c, i) => !c && neighbors(i).some((n) => board[n]));
+  if (adj >= 0) return adj;
+  const empty = board.findIndex((c) => !c);
+  return empty >= 0 ? empty : null;
+}
+
+function realmTitle(c: Record<string, number>): string {
+  if ((c.cottage ?? 0) >= 2) return "A growing village.";
+  if ((c.forest ?? 0) >= 2) return "A woodland realm.";
+  if (c.pond) return "A realm by the water.";
+  return "A realm takes shape.";
+}
+
+function harmonyLabel(h: number): string {
+  return h >= 6 ? "Radiant" : h >= 3 ? "Warm" : "Quiet";
+}
+
+function topPiece(c: Record<string, number>): Piece | undefined {
+  let bestId: string | undefined;
+  let best = 0;
+  for (const p of PIECES) {
+    const n = c[p.id] ?? 0;
+    if (n > best) {
+      best = n;
+      bestId = p.id;
+    }
+  }
+  return pieceById(bestId ?? null);
+}
+
+function flavourLine(c: Record<string, number>): string {
+  if (c.mystery) return "A riddle lingers in the realm.";
+  if (c.pond) return "Water laps at the edges.";
+  if (c.forest) return "Green presses close.";
+  return "A cosy little place.";
 }
 
 interface RealmSave {
@@ -69,54 +222,26 @@ function isRealmSave(value: unknown): value is RealmSave {
   );
 }
 
-function countBoard(board: string[]): Record<string, number> {
-  const c: Record<string, number> = {};
-  for (const cell of board) if (cell) c[cell] = (c[cell] ?? 0) + 1;
-  return c;
-}
-
-function practical(c: Record<string, number>): string {
-  if (!c.cottage) return "place a Cottage near the centre.";
-  if ((c.path ?? 0) < 2) return "lay a Path to link things up.";
-  if (!c.market) return "add a Market to gather folk.";
-  if (!c.tower) return "raise a Tower on an edge.";
-  return "fill an empty tile with a Path.";
-}
-
-function flavour(c: Record<string, number>): string {
-  if (c.pond && !c.bridge) return "a Bridge over that Pond?";
-  if (c.pond && !c.lantern) return "a Lantern by the water 🏮.";
-  if (c.forest && !c.lantern) return "a Lantern in the woods.";
-  if (c.cottage && !c.garden) return "a Garden by the cottages 🌷.";
-  return "leave a little Mystery 🔮.";
-}
-
-function realmTitle(c: Record<string, number>): string {
-  if ((c.cottage ?? 0) >= 2) return "A growing village.";
-  if ((c.forest ?? 0) >= 2) return "A woodland realm.";
-  if (c.pond) return "A realm by the water.";
-  return "A realm takes shape.";
-}
-
 function emptyBoard(): string[] {
   return Array.from({ length: SIZE }, () => "");
 }
 
-// Deterministic recommended empty tile: the empty cell nearest the centre.
-function suggestTile(board: string[]): number | null {
-  const cx = (COLS - 1) / 2;
-  const cy = (ROWS - 1) / 2;
-  let best = -1;
-  let bestD = Infinity;
-  board.forEach((cell, i) => {
-    if (cell) return;
-    const d = (i % COLS - cx) ** 2 + (Math.floor(i / COLS) - cy) ** 2;
-    if (d < bestD) {
-      bestD = d;
-      best = i;
-    }
-  });
-  return best === -1 ? null : best;
+function Chip({
+  icon,
+  value,
+  label,
+}: {
+  icon: string;
+  value: string | number;
+  label: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-2/50 px-2.5 py-1 ring-1 ring-border">
+      <span aria-hidden>{icon}</span>
+      <span className="font-display text-sm font-bold text-foreground">{value}</span>
+      <span className="text-[10px] uppercase tracking-wide text-faint">{label}</span>
+    </span>
+  );
 }
 
 export function CartographersTableGame() {
@@ -125,6 +250,7 @@ export function CartographersTableGame() {
   const [selected, setSelected] = useState<string | null>(null);
   const [placed, setPlaced] = useState(0);
   const [highlight, setHighlight] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<string>();
   const [log, setLog] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<string>();
   const logId = useRef(0);
@@ -143,19 +269,33 @@ export function CartographersTableGame() {
     setSelected(null);
     setPlaced(0);
     setHighlight(null);
+    setFeedback(undefined);
     setLog([]);
   }
 
   function place(i: number) {
     if (!selected || board[i] === selected) return;
-    setBoard((prev) => {
-      const next = prev.slice();
-      next[i] = selected;
-      return next;
-    });
+    const next = board.slice();
+    next[i] = selected;
+    const before = realmMetrics(board);
+    const after = realmMetrics(next);
+    const fb: string[] = [];
+    const dh = after.harmony - before.harmony;
+    if (dh > 0) fb.push(`🌿 +${dh} mood`);
+    const dl = after.linked - before.linked;
+    if (dl > 0) fb.push(`🟫 +${dl} linked`);
+    if (TOKEN[selected]) fb.push(`${TOKEN[selected]} arrived`);
+    const r1 = reactionIfSatisfied(board, next, AI1_REQUESTS);
+    if (r1) fb.push(`AI 1: ${r1}`);
+    const r2 = reactionIfSatisfied(board, next, AI2_REQUESTS);
+    if (r2) fb.push(`AI 2: ${r2}`);
+    const piece = pieceById(selected);
+    if (fb.length === 0 && piece) fb.push(`${piece.icon} placed`);
+
+    setBoard(next);
     setPlaced((p) => p + 1);
     setHighlight(null);
-    const piece = pieceById(selected);
+    setFeedback(fb.join(" · "));
     if (piece) pushLog(`${piece.icon} ${piece.label}`);
   }
 
@@ -176,6 +316,7 @@ export function CartographersTableGame() {
     setBoard(data.board);
     setPlaced(data.placed);
     setHighlight(null);
+    setFeedback(undefined);
     setStatus(`Loaded — ${data.placed} placed.`);
   }
 
@@ -185,8 +326,12 @@ export function CartographersTableGame() {
   }
 
   const counts = countBoard(board);
+  const m = realmMetrics(board);
   const selPiece = pieceById(selected);
   const revealed = placed >= GOAL;
+  const top = topPiece(counts);
+  const req1 = currentReqIdx(board, AI1_REQUESTS);
+  const req2 = currentReqIdx(board, AI2_REQUESTS);
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
@@ -195,8 +340,8 @@ export function CartographersTableGame() {
           <GamePanel>
             <div className="flex flex-col items-start gap-3">
               <p className="text-sm text-muted">
-                Pick a piece, then click an empty tile to place it. Build {GOAL}{" "}
-                tiles to reveal your realm.
+                Pick a piece, then click an empty tile. Build {GOAL} to bring the
+                realm to life.
               </p>
               <button type="button" onClick={start} className={PRIMARY}>
                 ▶ Start
@@ -206,20 +351,15 @@ export function CartographersTableGame() {
         ) : (
           <GamePanel>
             <div className="flex flex-col gap-3">
-              {/* Objective + how to play */}
-              <div className="rounded-xl border border-accent/30 bg-accent/5 p-3">
-                <p className="text-sm font-semibold text-foreground">
-                  {revealed
-                    ? "✦ Realm revealed — keep building or reset."
-                    : `Build your realm: ${placed} / ${GOAL} placed`}
-                </p>
-                <p className="mt-0.5 text-xs text-muted">
-                  Pick a piece, then click an empty tile. You can place a piece
-                  more than once.
-                </p>
+              {/* Realm status */}
+              <div className="flex flex-wrap gap-2">
+                <Chip icon="🌿" value={m.harmony} label="Mood" />
+                <Chip icon="🧑‍🌾" value={m.folk} label="Folk" />
+                <Chip icon="🟫" value={m.linked} label="Linked" />
+                <Chip icon="📍" value={`${placed}/${GOAL}`} label="Placed" />
               </div>
 
-              {/* Selected state + suggested move */}
+              {/* Selected + Show me */}
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ring-1 ${
@@ -237,20 +377,26 @@ export function CartographersTableGame() {
                     "Choose a piece below to start."
                   )}
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted">
-                    💡 AI 1: {practical(counts)}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={showMe}
-                    disabled={!selected}
-                    className="rounded-md bg-surface-2 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border transition hover:brightness-125 disabled:opacity-40"
-                  >
-                    Show me
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={showMe}
+                  disabled={!selected}
+                  className="rounded-md bg-surface-2 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border transition hover:brightness-125 disabled:opacity-40"
+                >
+                  Show me
+                </button>
               </div>
+
+              {/* Feedback / instruction */}
+              {placed > 0 && feedback ? (
+                <div className="rounded-lg bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent-soft ring-1 ring-accent/30">
+                  {feedback}
+                </div>
+              ) : (
+                <p className="text-xs text-faint">
+                  Pick a piece, then click an empty tile to build.
+                </p>
+              )}
 
               {/* Board */}
               <div
@@ -279,6 +425,14 @@ export function CartographersTableGame() {
                       }`}
                     >
                       <span aria-hidden>{p?.icon}</span>
+                      {cell && TOKEN[cell] ? (
+                        <span
+                          aria-hidden
+                          className="absolute right-0.5 top-0.5 text-[10px] drop-shadow"
+                        >
+                          {TOKEN[cell]}
+                        </span>
+                      ) : null}
                       {selected && !p ? (
                         <span
                           aria-hidden
@@ -314,21 +468,26 @@ export function CartographersTableGame() {
                 })}
               </div>
 
+              {/* Result */}
               {revealed ? (
                 <div className="flex flex-col gap-2 rounded-xl border border-teal/30 bg-teal/5 p-3">
                   <p className="text-sm font-semibold text-foreground">
                     {realmTitle(counts)}
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {PIECES.filter((p) => counts[p.id]).map((p) => (
-                      <span
-                        key={p.id}
-                        className="rounded-md bg-surface-2 px-2 py-0.5 text-xs text-muted ring-1 ring-border"
-                      >
-                        {p.icon} ×{counts[p.id]}
+                  <div className="flex flex-wrap gap-1.5 text-xs">
+                    <span className="rounded-md bg-surface-2 px-2 py-0.5 text-muted ring-1 ring-border">
+                      🌿 {harmonyLabel(m.harmony)} mood
+                    </span>
+                    <span className="rounded-md bg-surface-2 px-2 py-0.5 text-muted ring-1 ring-border">
+                      🧑‍🌾 {m.folk} folk
+                    </span>
+                    {top ? (
+                      <span className="rounded-md bg-surface-2 px-2 py-0.5 text-muted ring-1 ring-border">
+                        {top.icon} mostly {top.label}
                       </span>
-                    ))}
+                    ) : null}
                   </div>
+                  <p className="text-xs text-muted">{flavourLine(counts)}</p>
                 </div>
               ) : null}
 
@@ -340,8 +499,20 @@ export function CartographersTableGame() {
         )}
 
         <AIGamerPanel
-          ai1={{ line: started ? `Suggests: ${practical(counts)}` : undefined }}
-          ai2={{ line: started ? `Suggests: ${flavour(counts)}` : undefined }}
+          ai1={{
+            line: started
+              ? req1 >= 0
+                ? `Asks: ${AI1_REQUESTS[req1].label}`
+                : "Requests met — keep building!"
+              : undefined,
+          }}
+          ai2={{
+            line: started
+              ? req2 >= 0
+                ? `Asks: ${AI2_REQUESTS[req2].label}`
+                : "Requests met — explore!"
+              : undefined,
+          }}
         />
       </div>
 
