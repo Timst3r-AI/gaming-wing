@@ -57,7 +57,10 @@ export function ReflexGateGame() {
 
   function pushLog(text: string) {
     logId.current += 1;
-    setLog((prev) => [{ id: `g${logId.current}`, text }, ...prev]);
+    setLog((prev) => [
+      { id: `g${logId.current}-${Math.random().toString(36).slice(2, 7)}`, text },
+      ...prev,
+    ]);
   }
 
   // Reveal the sequence step by step, then hand control to the player.

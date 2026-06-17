@@ -67,7 +67,10 @@ export function RiddleRelayGame() {
 
   function pushLog(text: string) {
     logId.current += 1;
-    setLog((prev) => [{ id: `r${logId.current}`, text }, ...prev]);
+    setLog((prev) => [
+      { id: `r${logId.current}-${Math.random().toString(36).slice(2, 7)}`, text },
+      ...prev,
+    ]);
   }
 
   function start() {

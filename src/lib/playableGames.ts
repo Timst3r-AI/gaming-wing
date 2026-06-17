@@ -39,10 +39,10 @@ export const PLAYABLE_GAMES: PlayableGame[] = [
   {
     id: "cartographers-table",
     roomId: "world",
-    name: "Cartographer's Table",
+    name: "Tiny Realm Builder",
     slug: "cartographers-table",
     route: "/rooms/world/cartographers-table",
-    tagline: "Draw a tiny region from terrain, landmark, and lore cards.",
+    tagline: "Build a tiny fantasy realm on a visible grid.",
     saveKey: "ai-gaming-arena:cartographers-table:v1",
   },
   {
