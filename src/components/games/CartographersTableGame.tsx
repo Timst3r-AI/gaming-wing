@@ -10,7 +10,6 @@ import {
   EventLog,
   GamePanel,
   SaveControls,
-  Stat,
   type LogEntry,
 } from "@/components/games/GameKit";
 import { AIGamerPanel } from "@/components/games/AIGamerPanel";
@@ -19,7 +18,7 @@ const SAVE_KEY = "ai-gaming-arena:cartographers-table:v1";
 const COLS = 6;
 const ROWS = 6;
 const SIZE = COLS * ROWS;
-const SUMMARY_AT = 9;
+const GOAL = 9;
 const PRIMARY =
   "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
 const SECONDARY =
@@ -38,7 +37,7 @@ const GRASS = "bg-emerald-950/40 ring-emerald-900/40";
 const PIECES: Piece[] = [
   { id: "path", label: "Path", icon: "🟫", tile: "bg-amber-700/30 ring-amber-600/40" },
   { id: "cottage", label: "Cottage", icon: "🏠", tile: "bg-amber-500/20 ring-amber-400/40" },
-  { id: "market", label: "Market", icon: "⛺", tile: "bg-rose/20 ring-rose/40" },
+  { id: "market", label: "Market", icon: "🛖", tile: "bg-rose/20 ring-rose/40" },
   { id: "tower", label: "Tower", icon: "🗼", tile: "bg-nebula/20 ring-nebula/40" },
   { id: "garden", label: "Garden", icon: "🌷", tile: "bg-emerald-500/25 ring-emerald-400/40" },
   { id: "bridge", label: "Bridge", icon: "🌉", tile: "bg-sky/20 ring-sky/40" },
@@ -48,8 +47,8 @@ const PIECES: Piece[] = [
   { id: "mystery", label: "Mystery", icon: "🔮", tile: "bg-nebula/25 ring-nebula/50" },
 ];
 
-function pieceById(id: string): Piece | undefined {
-  return PIECES.find((p) => p.id === id);
+function pieceById(id: string | null): Piece | undefined {
+  return id ? PIECES.find((p) => p.id === id) : undefined;
 }
 
 interface RealmSave {
@@ -77,19 +76,19 @@ function countBoard(board: string[]): Record<string, number> {
 }
 
 function practical(c: Record<string, number>): string {
-  if (!c.cottage) return "Place a cottage near the centre.";
-  if ((c.path ?? 0) < 2) return "Lay a path to link things up.";
-  if (!c.market) return "A market would gather folk.";
-  if (!c.tower) return "Raise a tower on an edge.";
-  return "Fill an empty tile with a path.";
+  if (!c.cottage) return "place a Cottage near the centre.";
+  if ((c.path ?? 0) < 2) return "lay a Path to link things up.";
+  if (!c.market) return "add a Market to gather folk.";
+  if (!c.tower) return "raise a Tower on an edge.";
+  return "fill an empty tile with a Path.";
 }
 
 function flavour(c: Record<string, number>): string {
-  if (c.pond && !c.bridge) return "A bridge over that pond?";
-  if (c.pond && !c.lantern) return "A lantern by the water 🏮.";
-  if (c.forest && !c.lantern) return "A lantern in the woods.";
-  if (c.cottage && !c.garden) return "A garden by the cottages 🌷.";
-  return "Leave a little mystery 🔮.";
+  if (c.pond && !c.bridge) return "a Bridge over that Pond?";
+  if (c.pond && !c.lantern) return "a Lantern by the water 🏮.";
+  if (c.forest && !c.lantern) return "a Lantern in the woods.";
+  if (c.cottage && !c.garden) return "a Garden by the cottages 🌷.";
+  return "leave a little Mystery 🔮.";
 }
 
 function realmTitle(c: Record<string, number>): string {
@@ -103,11 +102,29 @@ function emptyBoard(): string[] {
   return Array.from({ length: SIZE }, () => "");
 }
 
+// Deterministic recommended empty tile: the empty cell nearest the centre.
+function suggestTile(board: string[]): number | null {
+  const cx = (COLS - 1) / 2;
+  const cy = (ROWS - 1) / 2;
+  let best = -1;
+  let bestD = Infinity;
+  board.forEach((cell, i) => {
+    if (cell) return;
+    const d = (i % COLS - cx) ** 2 + (Math.floor(i / COLS) - cy) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = i;
+    }
+  });
+  return best === -1 ? null : best;
+}
+
 export function CartographersTableGame() {
   const [started, setStarted] = useState(false);
   const [board, setBoard] = useState<string[]>(emptyBoard);
-  const [selected, setSelected] = useState("cottage");
+  const [selected, setSelected] = useState<string | null>(null);
   const [placed, setPlaced] = useState(0);
+  const [highlight, setHighlight] = useState<number | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<string>();
   const logId = useRef(0);
@@ -123,20 +140,28 @@ export function CartographersTableGame() {
   function start() {
     setStarted(true);
     setBoard(emptyBoard());
+    setSelected(null);
     setPlaced(0);
+    setHighlight(null);
     setLog([]);
   }
 
   function place(i: number) {
-    if (board[i] === selected) return;
+    if (!selected || board[i] === selected) return;
     setBoard((prev) => {
       const next = prev.slice();
       next[i] = selected;
       return next;
     });
     setPlaced((p) => p + 1);
+    setHighlight(null);
     const piece = pieceById(selected);
     if (piece) pushLog(`${piece.icon} ${piece.label}`);
+  }
+
+  function showMe() {
+    if (!selected) return;
+    setHighlight(suggestTile(board));
   }
 
   function save() {
@@ -150,6 +175,7 @@ export function CartographersTableGame() {
     setStarted(true);
     setBoard(data.board);
     setPlaced(data.placed);
+    setHighlight(null);
     setStatus(`Loaded — ${data.placed} placed.`);
   }
 
@@ -159,18 +185,18 @@ export function CartographersTableGame() {
   }
 
   const counts = countBoard(board);
-  const distinct = Object.keys(counts).length;
-  const sel = pieceById(selected);
-  const showSummary = started && placed >= SUMMARY_AT;
+  const selPiece = pieceById(selected);
+  const revealed = placed >= GOAL;
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
       <div className="flex flex-col gap-4">
         {!started ? (
           <GamePanel>
-            <div className="flex flex-col items-start gap-4">
-              <p className="text-muted">
-                Build a tiny fantasy realm. Pick a piece, then tap a tile.
+            <div className="flex flex-col items-start gap-3">
+              <p className="text-sm text-muted">
+                Pick a piece, then click an empty tile to place it. Build {GOAL}{" "}
+                tiles to reveal your realm.
               </p>
               <button type="button" onClick={start} className={PRIMARY}>
                 ▶ Start
@@ -180,43 +206,94 @@ export function CartographersTableGame() {
         ) : (
           <GamePanel>
             <div className="flex flex-col gap-3">
+              {/* Objective + how to play */}
+              <div className="rounded-xl border border-accent/30 bg-accent/5 p-3">
+                <p className="text-sm font-semibold text-foreground">
+                  {revealed
+                    ? "✦ Realm revealed — keep building or reset."
+                    : `Build your realm: ${placed} / ${GOAL} placed`}
+                </p>
+                <p className="mt-0.5 text-xs text-muted">
+                  Pick a piece, then click an empty tile. You can place a piece
+                  more than once.
+                </p>
+              </div>
+
+              {/* Selected state + suggested move */}
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex gap-2">
-                  <Stat label="Placed" value={placed} accentText="text-accent" />
-                  <Stat label="Pieces" value={distinct} accentText="text-teal" />
-                </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-sm font-medium text-foreground ring-1 ring-accent/40">
-                  <span aria-hidden>{sel?.icon}</span> Placing: {sel?.label}
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ring-1 ${
+                    selPiece
+                      ? "bg-accent/15 text-foreground ring-accent/50"
+                      : "bg-teal/10 text-teal ring-teal/40"
+                  }`}
+                >
+                  {selPiece ? (
+                    <>
+                      <span aria-hidden>{selPiece.icon}</span> Selected:{" "}
+                      {selPiece.label} — click an empty tile
+                    </>
+                  ) : (
+                    "Choose a piece below to start."
+                  )}
                 </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted">
+                    💡 AI 1: {practical(counts)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={showMe}
+                    disabled={!selected}
+                    className="rounded-md bg-surface-2 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border transition hover:brightness-125 disabled:opacity-40"
+                  >
+                    Show me
+                  </button>
+                </div>
               </div>
 
               {/* Board */}
               <div
-                className="grid gap-1 rounded-xl border border-border bg-background/40 p-2"
-                style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))` }}
-                role="grid"
+                className="grid grid-cols-6 gap-1 rounded-xl border border-border bg-background/40 p-2"
+                role="group"
                 aria-label="Realm board"
               >
                 {board.map((cell, i) => {
                   const p = pieceById(cell);
+                  const suggested = i === highlight;
                   return (
                     <button
                       key={i}
                       type="button"
                       onClick={() => place(i)}
-                      aria-label={`Tile ${(i % COLS) + 1}, ${Math.floor(i / COLS) + 1} — ${p ? p.label : "empty"}`}
-                      className={`grid aspect-square place-items-center rounded-md text-xl ring-1 transition hover:brightness-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      disabled={!selected}
+                      aria-label={`Tile ${(i % COLS) + 1}, ${Math.floor(i / COLS) + 1} — ${p ? p.label : "empty"}${suggested ? " — suggested" : ""}`}
+                      className={`group relative grid aspect-square place-items-center rounded-md text-xl ring-1 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                         p ? p.tile : GRASS
+                      } ${
+                        !selected
+                          ? "cursor-not-allowed opacity-80"
+                          : "cursor-pointer hover:brightness-150"
+                      } ${selected && !p ? "hover:ring-accent/70" : ""} ${
+                        suggested ? "gw-twinkle ring-2 ring-accent" : ""
                       }`}
                     >
                       <span aria-hidden>{p?.icon}</span>
+                      {selected && !p ? (
+                        <span
+                          aria-hidden
+                          className="absolute opacity-0 transition-opacity duration-150 group-hover:opacity-40 group-focus-visible:opacity-40"
+                        >
+                          {selPiece?.icon}
+                        </span>
+                      ) : null}
                     </button>
                   );
                 })}
               </div>
 
               {/* Toolbar */}
-              <div className="flex flex-wrap gap-1.5" role="toolbar" aria-label="Build pieces">
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label="Build pieces">
                 {PIECES.map((p) => {
                   const active = selected === p.id;
                   return (
@@ -227,7 +304,7 @@ export function CartographersTableGame() {
                       onClick={() => setSelected(p.id)}
                       className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium ring-1 transition ${
                         active
-                          ? "bg-accent/15 text-foreground ring-accent/60"
+                          ? "bg-accent/20 text-foreground ring-accent/70"
                           : "bg-surface-2/50 text-muted ring-border hover:text-foreground"
                       }`}
                     >
@@ -237,7 +314,7 @@ export function CartographersTableGame() {
                 })}
               </div>
 
-              {showSummary ? (
+              {revealed ? (
                 <div className="flex flex-col gap-2 rounded-xl border border-teal/30 bg-teal/5 p-3">
                   <p className="text-sm font-semibold text-foreground">
                     {realmTitle(counts)}
@@ -263,8 +340,8 @@ export function CartographersTableGame() {
         )}
 
         <AIGamerPanel
-          ai1={{ line: started ? practical(counts) : undefined }}
-          ai2={{ line: started ? flavour(counts) : undefined }}
+          ai1={{ line: started ? `Suggests: ${practical(counts)}` : undefined }}
+          ai2={{ line: started ? `Suggests: ${flavour(counts)}` : undefined }}
         />
       </div>
 
