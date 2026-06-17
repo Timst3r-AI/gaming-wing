@@ -36,7 +36,7 @@ const GRASS = "bg-emerald-950/40 ring-emerald-900/40";
 const PIECES: Piece[] = [
   { id: "path", label: "Path", icon: "🟫", tile: "bg-amber-700/30 ring-amber-600/40" },
   { id: "cottage", label: "Cottage", icon: "🏠", tile: "bg-amber-500/20 ring-amber-400/40" },
-  { id: "market", label: "Market", icon: "🛖", tile: "bg-rose/20 ring-rose/40" },
+  { id: "market", label: "Market Stall", icon: "🛖", tile: "bg-rose/20 ring-rose/40" },
   { id: "tower", label: "Tower", icon: "🗼", tile: "bg-nebula/20 ring-nebula/40" },
   { id: "garden", label: "Garden", icon: "🌷", tile: "bg-emerald-500/25 ring-emerald-400/40" },
   { id: "bridge", label: "Bridge", icon: "🌉", tile: "bg-sky/20 ring-sky/40" },
@@ -137,7 +137,7 @@ interface Req {
 
 const AI1_REQUESTS: Req[] = [
   { label: "Place a Cottage.", reaction: "Good start.", test: (b) => has(b, "cottage") },
-  { label: "Add a Market.", reaction: "Folk will gather.", test: (b) => has(b, "market") },
+  { label: "Add a Market Stall.", reaction: "Folk will gather.", test: (b) => has(b, "market") },
   { label: "Connect a building with a Path.", reaction: "Nice link.", test: pathLinked },
   { label: "Raise a Tower.", reaction: "Eyes on the horizon.", test: (b) => has(b, "tower") },
   { label: "Lay another Path.", reaction: "Tidy.", test: (b) => countOf(b, "path") >= 2 },
@@ -163,6 +163,19 @@ function reactionIfSatisfied(
   const bi = currentReqIdx(before, reqs);
   if (bi < 0) return null;
   return reqs[bi].test(after) ? reqs[bi].reaction : null;
+}
+
+// Light free-build ideas once both request tracks are complete (deterministic).
+function freeBuild1(b: string[]): string {
+  if (countOf(b, "path") < 4) return "Extend a Path to connect the village.";
+  if (countOf(b, "tower") < 1) return "A Tower could watch the edge.";
+  return "Add a Cottage for more folk.";
+}
+
+function freeBuild2(b: string[]): string {
+  if (countOf(b, "lantern") < 2) return "Add a Lantern near the village.";
+  if (countOf(b, "forest") < 1) return "Give the realm a Forest edge.";
+  return "Leave the realm a little Mystery.";
 }
 
 // Suggest an empty tile that helps build a connected realm.
@@ -356,8 +369,14 @@ export function CartographersTableGame() {
                 <Chip icon="🌿" value={m.harmony} label="Mood" />
                 <Chip icon="🧑‍🌾" value={m.folk} label="Folk" />
                 <Chip icon="🟫" value={m.linked} label="Linked" />
-                <Chip icon="📍" value={`${placed}/${GOAL}`} label="Placed" />
+                <Chip icon="📍" value={revealed ? placed : `${placed}/${GOAL}`} label="Placed" />
               </div>
+
+              {revealed ? (
+                <div className="rounded-lg border border-teal/30 bg-teal/5 px-3 py-1.5 text-xs font-medium text-teal">
+                  ✦ Realm revealed — free build mode. Keep shaping or reset.
+                </div>
+              ) : null}
 
               {/* Selected + Show me */}
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -503,14 +522,14 @@ export function CartographersTableGame() {
             line: started
               ? req1 >= 0
                 ? `Asks: ${AI1_REQUESTS[req1].label}`
-                : "Requests met — keep building!"
+                : `Idea: ${freeBuild1(board)}`
               : undefined,
           }}
           ai2={{
             line: started
               ? req2 >= 0
                 ? `Asks: ${AI2_REQUESTS[req2].label}`
-                : "Requests met — explore!"
+                : `Idea: ${freeBuild2(board)}`
               : undefined,
           }}
         />
