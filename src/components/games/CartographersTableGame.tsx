@@ -17,12 +17,13 @@ import {
   SaveControls,
   type LogEntry,
 } from "@/components/games/GameKit";
+import { AIGamerPanel } from "@/components/games/AIGamerPanel";
 
 const SAVE_KEY = "ai-gaming-arena:cartographers-table:v1";
 const PRIMARY =
-  "inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
 const SECONDARY =
-  "rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground";
+  "rounded-full border border-border px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground";
 
 type StepKey = (typeof CARTOGRAPHER_STEPS)[number]["key"];
 type Selections = Partial<Record<StepKey, string>>;
@@ -40,9 +41,7 @@ function isCartographerSave(value: unknown): value is CartographerSave {
 
 function cardOf(key: StepKey, id: string | undefined): Card | undefined {
   if (!id) return undefined;
-  return CARTOGRAPHER_STEPS.find((s) => s.key === key)?.cards.find(
-    (c) => c.id === id,
-  );
+  return CARTOGRAPHER_STEPS.find((s) => s.key === key)?.cards.find((c) => c.id === id);
 }
 
 function selectedCount(selections: Selections): number {
@@ -66,40 +65,28 @@ export function CartographersTableGame() {
     setStarted(true);
     setStepIndex(0);
     setSelections({});
-    pushLog("New region begun.");
+    setLog([]);
   }
 
   function pick(card: Card) {
     const step = CARTOGRAPHER_STEPS[stepIndex];
     setSelections((prev) => ({ ...prev, [step.key]: card.id }));
     setStepIndex((i) => i + 1);
-    pushLog(`${step.title}: ${card.name}`);
-  }
-
-  function reset() {
-    start();
-    setStatus(undefined);
+    pushLog(`${step.title}: ${card.name}.`);
   }
 
   function save() {
-    const ok = saveGameSave(SAVE_KEY, {
-      version: 1,
-      selections,
-    } satisfies CartographerSave);
-    setStatus(ok ? "Region saved to this browser." : "Could not save.");
+    const ok = saveGameSave(SAVE_KEY, { version: 1, selections } satisfies CartographerSave);
+    setStatus(ok ? "Saved to this browser." : "Could not save.");
   }
 
   function load() {
     const data = loadGameSave(SAVE_KEY, isCartographerSave);
-    if (!data) {
-      setStatus("No valid save found.");
-      return;
-    }
+    if (!data) return setStatus("No valid save found.");
     setStarted(true);
     setSelections(data.selections);
     setStepIndex(selectedCount(data.selections));
-    setStatus("Loaded saved region.");
-    pushLog(`Loaded save — ${selectedCount(data.selections)} / 4 cards chosen.`);
+    setStatus(`Loaded — ${selectedCount(data.selections)} / 4 cards.`);
   }
 
   function clear() {
@@ -116,8 +103,18 @@ export function CartographersTableGame() {
   const m = cardOf("mystery", selections.mystery);
   const summary =
     t && l && s && m
-      ? `In the ${t.name} — ${t.blurb} — ${l.name} (${l.blurb}) watches over ${s.name}, ${s.blurb}. Travelers trade tales of ${m.name}: ${m.blurb}.`
+      ? `In the ${t.name}, ${l.name} watches over ${s.name}. Travelers trade tales of ${m.name}.`
       : "";
+
+  let ai1: string | undefined;
+  let ai2: string | undefined;
+  if (started && step) {
+    ai1 = `Picks ${step.cards[stepIndex % step.cards.length].name}.`;
+    ai2 = `Likes ${step.cards[(stepIndex + 1) % step.cards.length].name}.`;
+  } else if (finished) {
+    ai1 = "A fine little region.";
+    ai2 = "Love that mystery.";
+  }
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
@@ -126,20 +123,19 @@ export function CartographersTableGame() {
           {!started ? (
             <div className="flex flex-col items-start gap-4">
               <p className="text-muted">
-                Build a tiny region by drawing four cards — terrain, landmark,
-                settlement, and one small mystery. The final map is composed from
-                your choices.
+                Draw four cards — terrain, landmark, settlement, mystery — to
+                compose a tiny region.
               </p>
               <button type="button" onClick={start} className={PRIMARY}>
-                ▶ Start build
+                ▶ Start
               </button>
             </div>
           ) : finished ? (
-            <div className="flex flex-col items-start gap-4">
-              <p className="font-display text-xl font-semibold text-foreground">
+            <div className="flex flex-col items-start gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
                 Your region
               </p>
-              <p className="rounded-xl border border-teal/30 bg-teal/5 p-4 leading-7 text-muted">
+              <p className="rounded-xl border border-teal/30 bg-teal/5 p-4 leading-7 text-foreground">
                 {summary}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -152,45 +148,42 @@ export function CartographersTableGame() {
                   </span>
                 ))}
               </div>
-              <button type="button" onClick={reset} className={PRIMARY}>
-                ↻ Draw a new region
+              <button type="button" onClick={start} className={PRIMARY}>
+                ↻ New region
               </button>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
-                  Step {stepIndex + 1} / {CARTOGRAPHER_STEPS.length} ·{" "}
-                  {step?.title}
-                </p>
-                <p className="mt-1 text-lg text-foreground">{step?.prompt}</p>
-              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+                Step {stepIndex + 1}/{CARTOGRAPHER_STEPS.length} · {step?.title}
+              </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {step?.cards.map((card) => (
                   <button
                     key={card.id}
                     type="button"
                     onClick={() => pick(card)}
-                    className="flex flex-col items-start gap-0.5 rounded-xl border border-border bg-surface-2/50 p-4 text-left transition-colors hover:border-teal/50 hover:bg-surface-2"
+                    className="flex flex-col items-start gap-0.5 rounded-xl border border-border bg-surface-2/50 p-3 text-left transition-colors hover:border-teal/50 hover:bg-surface-2"
                   >
-                    <span className="font-semibold text-foreground">
-                      {card.name}
-                    </span>
+                    <span className="text-sm font-semibold text-foreground">{card.name}</span>
                     <span className="text-xs text-muted">{card.blurb}</span>
                   </button>
                 ))}
               </div>
-              <button type="button" onClick={reset} className={`${SECONDARY} self-start`}>
+              <button type="button" onClick={start} className={`${SECONDARY} self-start`}>
                 ↻ Reset
               </button>
             </div>
           )}
         </GamePanel>
 
-        <SaveControls onSave={save} onLoad={load} onClear={clear} status={status} />
+        <AIGamerPanel ai1={{ line: ai1 }} ai2={{ line: ai2 }} />
       </div>
 
-      <EventLog entries={log} />
+      <div className="flex flex-col gap-5">
+        <EventLog entries={log} />
+        <SaveControls onSave={save} onLoad={load} onClear={clear} status={status} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ROOMS } from "@/lib/rooms";
-import { GAMES } from "@/lib/games";
 import { PageHeader } from "@/components/PageHeader";
 import { RoomCard } from "@/components/RoomCard";
 
@@ -17,7 +16,7 @@ export default function RoomsPage() {
         eyebrow="The arena"
         title="Rooms"
         icon="🚪"
-        lead={`Five rooms, each hosted by an agent and stocked with ${GAMES.length} mock games. Pick a door and step in — every room runs under the same governance.`}
+        lead="Five rooms, each with a first playable game and a small board of future game concepts. Pick a door and step in — every room runs under the same governance."
       />
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {ROOMS.map((room) => (

@@ -52,7 +52,7 @@ export function Stat({
 /** Recent event log. Newest entries first; shows up to `limit`. */
 export function EventLog({
   entries,
-  limit = 8,
+  limit = 5,
 }: {
   entries: LogEntry[];
   limit?: number;

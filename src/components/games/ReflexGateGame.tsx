@@ -14,11 +14,12 @@ import {
   Stat,
   type LogEntry,
 } from "@/components/games/GameKit";
+import { AIGamerPanel } from "@/components/games/AIGamerPanel";
 
 const SAVE_KEY = "ai-gaming-arena:reflex-gate:v1";
 const STEP_MS = 650;
 const PRIMARY =
-  "inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
 
 const PADS = [
   { id: 0, label: "Amber", base: "bg-accent/15 ring-accent/30", active: "bg-accent/70 ring-accent" },
@@ -59,23 +60,15 @@ export function ReflexGateGame() {
     setLog((prev) => [{ id: `g${logId.current}`, text }, ...prev]);
   }
 
-  // Reveal the current sequence step by step, then hand control to the player.
-  // All setState happens inside timeouts (asynchronous), never synchronously.
+  // Reveal the sequence step by step, then hand control to the player.
+  // All setState runs inside timeouts (asynchronous), never synchronously.
   useEffect(() => {
     if (phase !== "showing") return;
     let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
     sequence.forEach((pad, i) => {
-      timers.push(
-        setTimeout(() => {
-          if (!cancelled) setActiveStep(pad);
-        }, i * STEP_MS + 120),
-      );
-      timers.push(
-        setTimeout(() => {
-          if (!cancelled) setActiveStep(null);
-        }, i * STEP_MS + STEP_MS - 120),
-      );
+      timers.push(setTimeout(() => !cancelled && setActiveStep(pad), i * STEP_MS + 120));
+      timers.push(setTimeout(() => !cancelled && setActiveStep(null), i * STEP_MS + STEP_MS - 120));
     });
     timers.push(
       setTimeout(() => {
@@ -96,8 +89,8 @@ export function ReflexGateGame() {
     setSequence([randomPad()]);
     setInputIndex(0);
     setActiveStep(null);
+    setLog([]);
     setPhase("showing");
-    pushLog("Gate 1 — watch the sequence.");
   }
 
   function press(padId: number) {
@@ -105,20 +98,19 @@ export function ReflexGateGame() {
     if (padId === sequence[inputIndex]) {
       const nextIndex = inputIndex + 1;
       if (nextIndex >= sequence.length) {
-        // Round cleared — extend the sequence and show again.
         const nextRound = round + 1;
         setRound(nextRound);
         setBest((b) => Math.max(b, nextRound));
         setSequence((seq) => [...seq, randomPad()]);
         setPhase("showing");
-        pushLog(`Gate ${round} passed — on to gate ${nextRound}.`);
+        pushLog(`Gate ${round} passed.`);
       } else {
         setInputIndex(nextIndex);
       }
     } else {
       setBest((b) => Math.max(b, round));
       setPhase("over");
-      pushLog(`Missed at gate ${round}. Reached round ${round}.`);
+      pushLog(`Missed at gate ${round}.`);
     }
   }
 
@@ -128,23 +120,18 @@ export function ReflexGateGame() {
     setInputIndex(0);
     setRound(0);
     setActiveStep(null);
-    setStatus(undefined);
   }
 
   function save() {
     const ok = saveGameSave(SAVE_KEY, { version: 1, best } satisfies ReflexSave);
-    setStatus(ok ? "Best score saved to this browser." : "Could not save.");
+    setStatus(ok ? "Best saved to this browser." : "Could not save.");
   }
 
   function load() {
     const data = loadGameSave(SAVE_KEY, isReflexSave);
-    if (!data) {
-      setStatus("No valid save found.");
-      return;
-    }
+    if (!data) return setStatus("No valid save found.");
     setBest(data.best);
-    setStatus(`Loaded best score: ${data.best}.`);
-    pushLog(`Loaded save — best gate ${data.best}.`);
+    setStatus(`Loaded best: ${data.best}.`);
   }
 
   function clear() {
@@ -154,6 +141,23 @@ export function ReflexGateGame() {
   }
 
   const padsDisabled = phase !== "input";
+  const lights = sequence.length;
+  const plural = lights === 1 ? "" : "s";
+
+  let ai1: string | undefined;
+  let ai2: string | undefined;
+  if (phase === "showing") {
+    ai1 = `${lights} light${plural} this round.`;
+    ai2 = round > 1 ? `Gate ${round} — you've got this.` : "Here we go!";
+  } else if (phase === "input") {
+    ai1 = `${lights} to repeat — you're at ${inputIndex}/${lights}.`;
+    ai2 = "Take your time.";
+  } else if (phase === "over") {
+    ai1 = `That was ${round} gate${round === 1 ? "" : "s"}.`;
+    ai2 = "So close — run it back!";
+  } else {
+    ai2 = "Press start when ready.";
+  }
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
@@ -161,17 +165,24 @@ export function ReflexGateGame() {
         <GamePanel>
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex gap-2">
                 <Stat label="Gate" value={round || "—"} accentText="text-rose" />
                 <Stat label="Best" value={best} accentText="text-accent" />
               </div>
-              <p className="text-sm text-faint" role="status" aria-live="polite">
-                {phase === "idle" && "Press start to begin."}
-                {phase === "showing" && "Watch the sequence…"}
-                {phase === "input" &&
-                  `Repeat the sequence (${inputIndex}/${sequence.length}).`}
-                {phase === "over" && `Gate closed at round ${round}.`}
-              </p>
+              <span
+                role="status"
+                aria-live="polite"
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  phase === "input"
+                    ? "bg-teal/15 text-teal ring-1 ring-teal/40"
+                    : "bg-surface-2 text-faint ring-1 ring-border"
+                }`}
+              >
+                {phase === "idle" && "Ready"}
+                {phase === "showing" && "Watch…"}
+                {phase === "input" && `Your turn — repeat (${inputIndex}/${lights})`}
+                {phase === "over" && "Gate closed"}
+              </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3" aria-label="Reflex pads">
@@ -196,39 +207,41 @@ export function ReflexGateGame() {
 
             {phase === "idle" ? (
               <button type="button" onClick={start} className={PRIMARY}>
-                ▶ Start game
+                ▶ Start
               </button>
             ) : phase === "over" ? (
               <div className="flex flex-col items-start gap-2 rounded-xl border border-rose/30 bg-rose/5 p-4">
                 <p className="font-display text-lg font-semibold text-foreground">
-                  Reached round {round}.
+                  Reached round {round}. Best {best}.
                 </p>
-                <p className="text-sm text-muted">Best so far: {best}.</p>
                 <button type="button" onClick={start} className={PRIMARY}>
-                  ↻ Play again
+                  ↻ Again
                 </button>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={reset}
-                className="self-start rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground"
+                className="self-start rounded-full border border-border px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground"
               >
                 ↻ Reset
               </button>
             )}
 
             <p className="text-xs text-faint">
-              Memory, not speed — take all the time you need to repeat the
-              sequence. Pads are buttons; you can use the keyboard.
+              Memory, not speed — repeat the lights at your own pace. Pads are
+              keyboard-accessible buttons.
             </p>
           </div>
         </GamePanel>
 
-        <SaveControls onSave={save} onLoad={load} onClear={clear} status={status} />
+        <AIGamerPanel ai1={{ line: ai1 }} ai2={{ line: ai2 }} />
       </div>
 
-      <EventLog entries={log} />
+      <div className="flex flex-col gap-5">
+        <EventLog entries={log} />
+        <SaveControls onSave={save} onLoad={load} onClear={clear} status={status} />
+      </div>
     </div>
   );
 }
