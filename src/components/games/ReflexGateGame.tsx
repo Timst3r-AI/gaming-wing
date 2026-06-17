@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   clearGameSave,
   isV1Object,
@@ -17,18 +17,25 @@ import {
 import { AIGamerPanel } from "@/components/games/AIGamerPanel";
 
 const SAVE_KEY = "ai-gaming-arena:reflex-gate:v1";
-const STEP_MS = 650;
 const PRIMARY =
   "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background shadow-lg shadow-accent/20 transition-all hover:bg-accent-soft active:scale-95";
 
 const PADS = [
-  { id: 0, label: "Amber", base: "bg-accent/15 ring-accent/30", active: "bg-accent/70 ring-accent" },
-  { id: 1, label: "Teal", base: "bg-teal/15 ring-teal/30", active: "bg-teal/70 ring-teal" },
-  { id: 2, label: "Nebula", base: "bg-nebula/15 ring-nebula/30", active: "bg-nebula/70 ring-nebula" },
-  { id: 3, label: "Sky", base: "bg-sky/15 ring-sky/30", active: "bg-sky/70 ring-sky" },
+  { id: 0, name: "Amber", swatch: "bg-accent text-background", pad: "bg-accent/20 ring-accent/50 hover:bg-accent/35" },
+  { id: 1, name: "Teal", swatch: "bg-teal text-background", pad: "bg-teal/20 ring-teal/50 hover:bg-teal/35" },
+  { id: 2, name: "Nebula", swatch: "bg-nebula text-background", pad: "bg-nebula/20 ring-nebula/50 hover:bg-nebula/35" },
+  { id: 3, name: "Sky", swatch: "bg-sky text-background", pad: "bg-sky/20 ring-sky/50 hover:bg-sky/35" },
 ];
 
-type Phase = "idle" | "showing" | "input" | "over";
+const AI2_PLAY = [
+  "Match the glow.",
+  "Tap its twin.",
+  "Eyes on the gate.",
+  "Keep the streak.",
+  "Nice rhythm.",
+];
+
+type Phase = "idle" | "play" | "over";
 
 interface ReflexSave {
   version: 1;
@@ -40,17 +47,17 @@ function isReflexSave(value: unknown): value is ReflexSave {
   return typeof value.best === "number";
 }
 
-function randomPad(): number {
-  return Math.floor(Math.random() * PADS.length);
+function nextTarget(prev: number): number {
+  const t = Math.floor(Math.random() * PADS.length);
+  return t === prev ? (t + 1) % PADS.length : t;
 }
 
 export function ReflexGateGame() {
   const [phase, setPhase] = useState<Phase>("idle");
-  const [sequence, setSequence] = useState<number[]>([]);
-  const [inputIndex, setInputIndex] = useState(0);
-  const [round, setRound] = useState(0);
+  const [target, setTarget] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
-  const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<string>();
   const [log, setLog] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<string>();
   const logId = useRef(0);
@@ -63,66 +70,36 @@ export function ReflexGateGame() {
     ]);
   }
 
-  // Reveal the sequence step by step, then hand control to the player.
-  // All setState runs inside timeouts (asynchronous), never synchronously.
-  useEffect(() => {
-    if (phase !== "showing") return;
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    sequence.forEach((pad, i) => {
-      timers.push(setTimeout(() => !cancelled && setActiveStep(pad), i * STEP_MS + 120));
-      timers.push(setTimeout(() => !cancelled && setActiveStep(null), i * STEP_MS + STEP_MS - 120));
-    });
-    timers.push(
-      setTimeout(() => {
-        if (cancelled) return;
-        setActiveStep(null);
-        setInputIndex(0);
-        setPhase("input");
-      }, sequence.length * STEP_MS + 200),
-    );
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [phase, sequence]);
-
   function start() {
-    setRound(1);
-    setSequence([randomPad()]);
-    setInputIndex(0);
-    setActiveStep(null);
+    setScore(0);
+    setTarget(nextTarget(-1));
+    setPhase("play");
+    setFeedback(undefined);
     setLog([]);
-    setPhase("showing");
   }
 
-  function press(padId: number) {
-    if (phase !== "input") return;
-    if (padId === sequence[inputIndex]) {
-      const nextIndex = inputIndex + 1;
-      if (nextIndex >= sequence.length) {
-        const nextRound = round + 1;
-        setRound(nextRound);
-        setBest((b) => Math.max(b, nextRound));
-        setSequence((seq) => [...seq, randomPad()]);
-        setPhase("showing");
-        pushLog(`Gate ${round} passed.`);
-      } else {
-        setInputIndex(nextIndex);
-      }
+  function press(id: number) {
+    if (phase !== "play" || target === null) return;
+    if (id === target) {
+      const s = score + 1;
+      setScore(s);
+      setBest((b) => Math.max(b, s));
+      setFeedback(`✓ Match! Streak ${s}`);
+      pushLog(`Matched ${PADS[id].name} — streak ${s}.`);
+      setTarget(nextTarget(target));
     } else {
-      setBest((b) => Math.max(b, round));
+      setBest((b) => Math.max(b, score));
       setPhase("over");
-      pushLog(`Missed at gate ${round}.`);
+      setFeedback(`✗ Gate closed — that was ${PADS[target].name}.`);
+      pushLog(`Missed at streak ${score}.`);
     }
   }
 
   function reset() {
     setPhase("idle");
-    setSequence([]);
-    setInputIndex(0);
-    setRound(0);
-    setActiveStep(null);
+    setTarget(null);
+    setScore(0);
+    setFeedback(undefined);
   }
 
   function save() {
@@ -143,21 +120,15 @@ export function ReflexGateGame() {
     setStatus("Browser save cleared.");
   }
 
-  const padsDisabled = phase !== "input";
-  const lights = sequence.length;
-  const plural = lights === 1 ? "" : "s";
-
+  const tgt = target !== null ? PADS[target] : null;
   let ai1: string | undefined;
   let ai2: string | undefined;
-  if (phase === "showing") {
-    ai1 = `${lights} light${plural} this round.`;
-    ai2 = round > 1 ? `Gate ${round} — you've got this.` : "Here we go!";
-  } else if (phase === "input") {
-    ai1 = `${lights} to repeat — you're at ${inputIndex}/${lights}.`;
-    ai2 = "Take your time.";
+  if (phase === "play" && tgt) {
+    ai1 = `Target: ${tgt.name}.`;
+    ai2 = AI2_PLAY[score % AI2_PLAY.length];
   } else if (phase === "over") {
-    ai1 = `That was ${round} gate${round === 1 ? "" : "s"}.`;
-    ai2 = "So close — run it back!";
+    ai1 = `Reached ${score}. Best ${best}.`;
+    ai2 = "Run it back!";
   } else {
     ai2 = "Press start when ready.";
   }
@@ -169,72 +140,92 @@ export function ReflexGateGame() {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2">
-                <Stat label="Gate" value={round || "—"} accentText="text-rose" />
+                <Stat label="Streak" value={score} accentText="text-rose" />
                 <Stat label="Best" value={best} accentText="text-accent" />
               </div>
-              <span
-                role="status"
-                aria-live="polite"
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  phase === "input"
-                    ? "bg-teal/15 text-teal ring-1 ring-teal/40"
-                    : "bg-surface-2 text-faint ring-1 ring-border"
-                }`}
-              >
-                {phase === "idle" && "Ready"}
-                {phase === "showing" && "Watch…"}
-                {phase === "input" && `Your turn — repeat (${inputIndex}/${lights})`}
-                {phase === "over" && "Gate closed"}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3" aria-label="Reflex pads">
-              {PADS.map((pad) => {
-                const lit = activeStep === pad.id;
-                return (
-                  <button
-                    key={pad.id}
-                    type="button"
-                    onClick={() => press(pad.id)}
-                    disabled={padsDisabled}
-                    aria-label={`${pad.label} pad`}
-                    className={`grid h-20 place-items-center rounded-2xl ring-1 font-medium text-foreground/90 transition-all duration-150 sm:h-24 ${
-                      lit ? pad.active : pad.base
-                    } ${padsDisabled ? "cursor-not-allowed opacity-80" : "hover:brightness-125"}`}
-                  >
-                    {pad.label}
-                  </button>
-                );
-              })}
+              {feedback ? (
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${
+                    feedback.startsWith("✓")
+                      ? "bg-teal/15 text-teal ring-teal/40"
+                      : "bg-rose/15 text-rose ring-rose/40"
+                  }`}
+                >
+                  {feedback}
+                </span>
+              ) : null}
             </div>
 
             {phase === "idle" ? (
-              <button type="button" onClick={start} className={PRIMARY}>
-                ▶ Start
-              </button>
-            ) : phase === "over" ? (
-              <div className="flex flex-col items-start gap-2 rounded-xl border border-rose/30 bg-rose/5 p-4">
-                <p className="font-display text-lg font-semibold text-foreground">
-                  Reached round {round}. Best {best}.
+              <div className="flex flex-col items-start gap-3">
+                <p className="text-sm text-muted">
+                  A glowing gate appears — click the pad that matches its colour.
                 </p>
                 <button type="button" onClick={start} className={PRIMARY}>
-                  ↻ Again
+                  ▶ Start
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={reset}
-                className="self-start rounded-full border border-border px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground"
-              >
-                ↻ Reset
-              </button>
-            )}
+              <>
+                {/* Target */}
+                <div className="flex flex-col gap-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-faint">
+                    {phase === "play" ? "Match this gate" : "Gate closed"}
+                  </p>
+                  <div
+                    className={`grid h-28 place-items-center rounded-2xl text-2xl font-bold shadow-2xl ${
+                      tgt ? tgt.swatch : "bg-surface-2 text-faint"
+                    } ${phase === "play" ? "gw-pulse" : "opacity-60"}`}
+                  >
+                    {tgt ? `◆ ${tgt.name}` : "—"}
+                  </div>
+                </div>
 
-            <p className="text-xs text-faint">
-              Memory, not speed — repeat the lights at your own pace. Pads are
-              keyboard-accessible buttons.
-            </p>
+                {/* Pads */}
+                <div className="grid grid-cols-2 gap-3" aria-label="Colour pads">
+                  {PADS.map((pad) => (
+                    <button
+                      key={pad.id}
+                      type="button"
+                      onClick={() => press(pad.id)}
+                      disabled={phase !== "play"}
+                      aria-label={`${pad.name} pad`}
+                      className={`grid h-16 place-items-center rounded-2xl ring-1 font-semibold text-foreground transition focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:h-20 ${
+                        pad.pad
+                      } ${phase !== "play" ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+                    >
+                      {pad.name}
+                    </button>
+                  ))}
+                </div>
+
+                {phase === "over" ? (
+                  <div className="flex flex-col items-start gap-2 rounded-xl border border-rose/30 bg-rose/5 p-4">
+                    <p className="font-display text-lg font-semibold text-foreground">
+                      Streak {score} · Best {best}
+                    </p>
+                    <button type="button" onClick={start} className={PRIMARY}>
+                      ↻ Again
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={reset}
+                    className="self-start rounded-full border border-border px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-border-strong hover:text-foreground"
+                  >
+                    ↻ Reset
+                  </button>
+                )}
+
+                <p className="text-xs text-faint">
+                  Click the matching pad — no timer, no sequence. Pads are
+                  keyboard-accessible buttons.
+                </p>
+              </>
+            )}
           </div>
         </GamePanel>
 

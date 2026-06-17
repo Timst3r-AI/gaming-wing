@@ -57,10 +57,10 @@ export const PLAYABLE_GAMES: PlayableGame[] = [
   {
     id: "reflex-gate",
     roomId: "arcade",
-    name: "Reflex Gate",
+    name: "Glow Match Gate",
     slug: "reflex-gate",
     route: "/rooms/arcade/reflex-gate",
-    tagline: "Repeat the growing sequence to pass each gate.",
+    tagline: "Match the glowing gate before it closes.",
     saveKey: "ai-gaming-arena:reflex-gate:v1",
   },
 ];
